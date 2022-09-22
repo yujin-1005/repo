@@ -322,7 +322,7 @@ void Stonne::cycle() {
 
         start = std::chrono::steady_clock::now(); 
         this->asnet->cycle();
-        this->lt->cycle();
+          this->lt->cycle();
 //        this->collectionBus->cycle(); //This order since these are connections that have to be seen in next cycle
         end = std::chrono::steady_clock::now();
         this->time_as+=std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();

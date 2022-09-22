@@ -350,8 +350,11 @@ DataPackage* ASwitch::perform_operation_3_operands(DataPackage* pck_left, DataPa
     if(pck_left->get_vn() != pck_right->get_vn()) {
         std::cout << "Ha petado en el ASwitch: " << "(" << this->level << ":" << this->num_in_level << ")" << "Left VN=" << pck_left->get_vn() << " Right VN=" << pck_right->get_vn() <<  std::endl;
     }
-    assert(pck_left->get_vn() == pck_right->get_vn()); 
+    //Ignore the functionality of this function, SH 2022.9.21
+   /* assert(pck_left->get_vn() == pck_right->get_vn());
     assert(pck_right->get_vn() == pck_forward->get_vn()); //3 vn ids must fit
+    */
+
     //Calculating the result of the operation
     data_t result;
     switch(this->operation_mode) {
@@ -360,7 +363,9 @@ DataPackage* ASwitch::perform_operation_3_operands(DataPackage* pck_left, DataPa
             std::cout << "[ASWITCH_FUNC] Cycle " << local_cycle << ", ASwitch " << this->level << ":" << this->num_in_level << " has performed a 3:1 sum" << std::endl;
 #endif
 
-            result = pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
+
+          //  result = pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
+             result = 0; //pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
             this->aswitchStats.n_3_1_sums++; //Track the information
             break;
         //case COMPARATOR: //MAX POOL IMPLEMENTATION. Really this does not make much sense here. But it is implemented for possible future uses

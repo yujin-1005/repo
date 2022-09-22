@@ -45,6 +45,7 @@ std::vector<Connection*> DSNetworkTop::getTopConnections() {
 
 void DSNetworkTop::cycle() {
     for(int i=0; i<this->n_input_ports; i++) {
+        std::cout<<"n_input_ports = "<<this->n_input_ports<<std::endl;
         dsnetworks[i]->cycle();
     }
 }

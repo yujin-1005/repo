@@ -99,8 +99,10 @@ void DSNetwork::cycle() {
     //The order from root to leaves is important in terms of the correctness of the network.
     int switches_this_level = 1; //Only one switch in the root
     //Going down to the leaves (no count the MSs)
+    std::cout<<"nlevels"<<this->nlevels<<std::endl;
     for(int i=0; i < this->nlevels; i++) {
         for(int j=0; j < switches_this_level; j++) {
+            std::cout<<"make distribution switch pair"<<std::endl;
             std::pair<int,int> current_switch_pair (i,j);
             DSwitch* ds = dswitchtable[current_switch_pair];
             ds->cycle();  //executing the cycle for the current DS. 

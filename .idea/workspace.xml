@@ -12,7 +12,51 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="Initial commit" />
+    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="Initial commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/ASNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/ASNetwork.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/ASwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/ASwitch.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/AccumulationBuffer.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/AccumulationBuffer.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Accumulator.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Accumulator.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CollectionBus.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CollectionBus.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CollectionBusLine.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CollectionBusLine.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CompilerART.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerART.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CompilerFEN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerFEN.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CompilerMSN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerMSN.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/CompilerMultiplierMesh.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerMultiplierMesh.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Config.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Config.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Connection.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Connection.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DNNLayer.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DNNLayer.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DNNModel.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DNNModel.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DSNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSNetwork.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DSNetworkTop.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSNetworkTop.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DSwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSwitch.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/DataPackage.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DataPackage.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/FEASwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/FEASwitch.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/FENetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/FENetwork.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Fifo.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Fifo.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/LookupTable.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/LookupTable.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/MSNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MSNetwork.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/MSwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MSwitch.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/MultiplierOS.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MultiplierOS.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/OSMeshMN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/OSMeshMN.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/OSMeshSDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/OSMeshSDMemory.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/SDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/SDMemory.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/STONNEModel.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/STONNEModel.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/SparseSDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/SparseSDMemory.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Stats.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Stats.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/TemporalRN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/TemporalRN.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/Tile.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Tile.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/testbench.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/testbench.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/utility.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/utility.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ASwitch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ASwitch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DSNetwork.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSNetwork.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DSNetworkTop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSNetworkTop.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/STONNEModel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/STONNEModel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SparseSDMemory.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SparseSDMemory.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -92,18 +136,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/home/yujin/docker_stonne/stonne_omega/stonne/local_stonne/stonne",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yujin/docker_stonne/stonne_omega/stonne/local_stonne/stonne&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;pyconsole&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Remote Debug.stonne">
     <configuration name="stonne" type="CLion_Remote" version="1" remoteCommand="127.0.0.1:1234" symbolFile="$PROJECT_DIR$/stonne" sysroot="">
       <debugger kind="GDB" isBundled="true" />
@@ -150,7 +194,11 @@
       <workItem from="1663582146013" duration="9890000" />
       <workItem from="1663636012474" duration="6123000" />
       <workItem from="1663647270364" duration="16732000" />
-      <workItem from="1663671181524" duration="6624000" />
+      <workItem from="1663671181524" duration="8720000" />
+      <workItem from="1663723017006" duration="6698000" />
+      <workItem from="1663732526092" duration="32887000" />
+      <workItem from="1663808406489" duration="5539000" />
+      <workItem from="1663819786080" duration="9967000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1663678900555</created>
@@ -166,7 +214,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663679164364</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Initial commit">
+      <created>1663679276744</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1663679276744</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,17 +248,59 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/ASwitch.cpp</url>
+          <line>424</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <condition expression="conn&lt;1000" language="ObjectiveC" />
+          <url>file://$PROJECT_DIR$/src/DSNetworkTop.cpp</url>
+          <line>21</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <condition expression="dsnet&lt;1000" language="ObjectiveC" />
+          <url>file://$PROJECT_DIR$/src/DSNetworkTop.cpp</url>
+          <line>22</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>784</line>
-          <option name="timeStamp" value="23" />
+          <line>233</line>
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>158</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file:///usr/local/include/c++/8.3.0/ext/new_allocator.h</url>
+          <line>110</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>288</line>
+          <option name="timeStamp" value="119" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CLion_Remote">
-        <watch expression="input_fifos" language="ObjectiveC" />
-        <watch expression="pck_to_send" language="ObjectiveC" />
+        <watch expression="input_fifos" />
+        <watch expression="sizeof(_Tp)" />
+        <watch expression="size()" />
+        <watch expression="this-&gt;input_fifos[input_port]" />
+        <watch expression="mem-&gt;input_fifos[1]-&gt;size()" language="ObjectiveC" />
+        <watch expression="input_fifos[1]-&gt;size()" language="ObjectiveC" />
+        <watch expression="mem" />
+        <watch expression="*(0x6fcaf0)" language="ObjectiveC" />
+        <watch expression="msnet" />
+        <watch expression="this-&gt;n_cycles" language="ObjectiveC" />
+        <watch expression="weight_fifo" />
+        <watch expression="STR_address[sta_current_index_metadata]" />
       </configuration>
     </watches-manager>
   </component>
