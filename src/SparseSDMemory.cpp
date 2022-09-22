@@ -568,25 +568,28 @@ void SparseSDMemory::cycle() {
 
     //Receiving output data from write_connection
     this->receive();
-    std::cout<<"receive"<<std::endl;
 
     if(!write_fifo->isEmpty()) {
-        std::cout<<"write fifo is not empty"<<std::endl;
+        std::cout<<"[WRITE_FIFO] pop write_fifo -> write output_address (psum or ofmap)"<<std::endl;
         //Index the data by using the VN Address Table and the VN id of the packages
         for(int i=0; i<write_fifo->size(); i++) {
             DataPackage* pck_received = write_fifo->pop();
             unsigned int vn = pck_received->get_vn();
             data_t data = pck_received->get_data();
-            this->sdmemoryStats.n_SRAM_psum_writes++; //To track information 
+            this->sdmemoryStats.n_SRAM_psum_writes++; //To track information
+
 	    unsigned int addr_offset = (sta_current_index_metadata+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
 	    vnat_table[vn]++; 
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
             current_output++;
 	    current_output_iteration++;
+        std::cout << "[CURRENT_OUTPUT_ITERATION : OUTPUT_SIZE_ITERATION] "<<current_output_iteration<<" : "<<output_size_iteration<<std::endl;
+
 	    if(current_output_iteration==output_size_iteration) {
                 current_output_iteration = 0;
 		sta_iter_completed=true;
 	    }
+
             std::cout << "write fifo i = " << i << std::endl;
             std::cout << "write fifo size = " << write_fifo->size() << std::endl;
 
@@ -824,11 +827,9 @@ void SparseSDMemory::send() {
 //TODO Remove this connection
 void SparseSDMemory::receive() { //TODO control if there is no space in queue
     if(this->write_connection->existPendingData()) {
-        std::cout<<"exists pending data"<< std::endl;
         std::vector<DataPackage*> data_received = write_connection->receive();
-        std::cout<< "vector receive"<<std::endl;
         for(int i=0; i<data_received.size(); i++) {
-            std::cout << "write fifo push"<<std::endl;
+            std::cout<<"[DATA RECEIVE] write_connection -> write_fifo push"<<std::endl;
             write_fifo->push(data_received[i]);
         }
     }

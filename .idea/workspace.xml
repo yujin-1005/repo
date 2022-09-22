@@ -12,50 +12,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="Initial commit">
+    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="Edit weight value address (STR_address) &amp; str_counters_table (DIST_STR_MATRIX state)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/ASNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/ASNetwork.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/ASwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/ASwitch.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/AccumulationBuffer.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/AccumulationBuffer.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Accumulator.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Accumulator.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CollectionBus.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CollectionBus.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CollectionBusLine.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CollectionBusLine.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CompilerART.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerART.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CompilerFEN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerFEN.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CompilerMSN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerMSN.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/CompilerMultiplierMesh.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/CompilerMultiplierMesh.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Config.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Config.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Connection.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Connection.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DNNLayer.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DNNLayer.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DNNModel.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DNNModel.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DSNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSNetwork.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DSNetworkTop.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSNetworkTop.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DSwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DSwitch.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/DataPackage.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/DataPackage.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/FEASwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/FEASwitch.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/FENetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/FENetwork.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Fifo.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Fifo.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/LookupTable.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/LookupTable.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/MSNetwork.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MSNetwork.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/MSwitch.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MSwitch.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/MultiplierOS.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/MultiplierOS.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/OSMeshMN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/OSMeshMN.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/OSMeshSDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/OSMeshSDMemory.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/SDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/SDMemory.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/STONNEModel.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/STONNEModel.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/objs/SparseSDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/SparseSDMemory.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Stats.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Stats.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/TemporalRN.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/TemporalRN.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/Tile.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/Tile.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/main.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/testbench.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/testbench.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objs/utility.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/utility.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ASwitch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ASwitch.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DSNetwork.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSNetwork.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DSNetworkTop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/DSNetworkTop.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/STONNEModel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/STONNEModel.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SparseSDMemory.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SparseSDMemory.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +105,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/yujin/docker_stonne/stonne_omega/stonne/local_stonne/stonne&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;pyconsole&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
   }
 }</component>
   <component name="RunManager" selected="Remote Debug.stonne">
@@ -198,7 +158,8 @@
       <workItem from="1663723017006" duration="6698000" />
       <workItem from="1663732526092" duration="32887000" />
       <workItem from="1663808406489" duration="5539000" />
-      <workItem from="1663819786080" duration="9967000" />
+      <workItem from="1663819786080" duration="17275000" />
+      <workItem from="1663843651323" duration="1098000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1663678900555</created>
@@ -221,7 +182,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663679276744</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Edit weight value address (STR_address) &amp; str_counters_table (DIST_STR_MATRIX state)">
+      <created>1663831972562</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1663831972562</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -243,7 +211,8 @@
       <path value="$PROJECT_DIR$/../../.." />
     </ignored-roots>
     <MESSAGE value="Initial commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initial commit" />
+    <MESSAGE value="Edit weight value address (STR_address) &amp; str_counters_table (DIST_STR_MATRIX state)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Edit weight value address (STR_address) &amp; str_counters_table (DIST_STR_MATRIX state)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -265,16 +234,6 @@
           <line>22</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>233</line>
-          <option name="timeStamp" value="42" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>158</line>
-          <option name="timeStamp" value="43" />
-        </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file:///usr/local/include/c++/8.3.0/ext/new_allocator.h</url>
           <line>110</line>
@@ -282,8 +241,43 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>288</line>
-          <option name="timeStamp" value="119" />
+          <line>610</line>
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>589</line>
+          <option name="timeStamp" value="139" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>584</line>
+          <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>846</line>
+          <option name="timeStamp" value="143" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>832</line>
+          <option name="timeStamp" value="145" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>575</line>
+          <option name="timeStamp" value="146" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>657</line>
+          <option name="timeStamp" value="147" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
+          <line>571</line>
+          <option name="timeStamp" value="148" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -301,6 +295,8 @@
         <watch expression="this-&gt;n_cycles" language="ObjectiveC" />
         <watch expression="weight_fifo" />
         <watch expression="STR_address[sta_current_index_metadata]" />
+        <watch expression="write_fifo" />
+        <watch expression="write_fifo-&gt;fifo[1]-&gt;operation_mode" />
       </configuration>
     </watches-manager>
   </component>
