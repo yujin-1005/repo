@@ -176,8 +176,8 @@ void ASwitch::setConfigurationMode(adderconfig_t config_mode) {
 }
 
 void ASwitch::setChildsEnabled(bool left_child_enabled, bool right_child_enabled) {
-    this->left_child_enabled = left_child_enabled;
-    this->right_child_enabled = right_child_enabled;
+        this->left_child_enabled = left_child_enabled;
+        this->right_child_enabled = right_child_enabled;
 #ifdef DEBUG_ASWITCH_CONFIG
     std::cout << "[ASWITCH_CONFIG] AS " << this->level << ":" << this->num_in_level << " left child enabled: " << this->left_child_enabled << std::endl;
     std::cout << "[ASWITCH_CONFIG] AS " << this->level << ":" << this->num_in_level << " right child enabled: " << this->right_child_enabled << std::endl;
@@ -246,7 +246,8 @@ void ASwitch::send() {
 
 //TODO Controlar el bw
 void ASwitch::receive_childs() { 
-    if(this->inputLeftConnection->existPendingData()) { //If there is data to receive on the left
+    if(this->inputLeftConnection->existPendingData()) { //If
+        // there is data to receive on the left
     	std::vector<DataPackage*> data_received_left = this->inputLeftConnection->receive(); //Copying the data to receive
         for(int i=0; i<data_received_left.size(); i++) {
 #ifdef DEBUG_ASWITCH_FUNC
@@ -363,9 +364,8 @@ DataPackage* ASwitch::perform_operation_3_operands(DataPackage* pck_left, DataPa
             std::cout << "[ASWITCH_FUNC] Cycle " << local_cycle << ", ASwitch " << this->level << ":" << this->num_in_level << " has performed a 3:1 sum" << std::endl;
 #endif
 
-
-          //  result = pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
-             result = 0; //pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
+            result = pck_left->get_data() +  pck_right->get_data() +  pck_forward->get_data();
+            std::cout<< "[PERFORM_OPERATION_3_OPERANDS] get left data + right + forwarding" <<std::endl;
             this->aswitchStats.n_3_1_sums++; //Track the information
             break;
         //case COMPARATOR: //MAX POOL IMPLEMENTATION. Really this does not make much sense here. But it is implemented for possible future uses

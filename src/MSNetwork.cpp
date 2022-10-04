@@ -207,7 +207,7 @@ void MSNetwork::cycle() {
     //Reverse order to the forwarding. The current cycle receives the data of the forwarding links sent in the previous cycle. 
     for(int i=0; i < this->ms_size; i++) {
         MSwitch* ms = mswitchtable[i];
-        std::cout<< "MSwitch"<<i<<std::endl;
+        //std::cout<< "MSwitch"<<i<<std::endl;
         ms->cycle();
     }
 }

@@ -306,7 +306,6 @@ void Stonne::cycle() {
     bool execution_finished=false;
     while(!execution_finished) {
         auto start = std::chrono::steady_clock::now();
-        std::cout << "mem cycle!!!!!!!!!"<<std::endl;
         this->mem->cycle();
         auto end = std::chrono::steady_clock::now();
         this->time_mem+=std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
@@ -342,7 +341,7 @@ void Stonne::cycle() {
         
         execution_finished = this->mem->isExecutionFinished();
         this->n_cycles++;
-        std::cout<<"n_cycles"<<n_cycles<<std::endl;
+        std::cout<<"[COUNT TOTAL CYCLE] total n_cycle is "<<n_cycles<<std::endl;
     }
 
     if(this->stonne_cfg.print_stats_enabled) { //If sats printing is enable

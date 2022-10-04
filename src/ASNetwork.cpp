@@ -317,8 +317,6 @@ void ASNetwork::configureSparseSignals(std::vector<SparseVN> sparseVNs, DNNLayer
     this->forwardingToMemoryConfiguration(forwarding_to_memory_enabled);
     //std::cout<<"ASNetwork forwardingToMemoryConfiguration"<<std::endl;
     delete compiler_art;
-    std::cout<< "delete compiler art"<< std::endl;
-    compiler_art = nullptr;
 }
 
 

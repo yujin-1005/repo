@@ -17,9 +17,8 @@ bool Connection::existPendingData() {
     return this->pending_data;
 }
 
-//Send a package to the interconnection. If there is no remaining bandiwth an exception is raised
+//Send a package to the interconnection. If there is no remaining bandwidth an exception is raised
 void Connection::send(vector<DataPackage*> data_p) {
-    std::cout<<"send(vector<DataPackage*> data_p)"<<std::endl;
 #ifdef DEBUG
     //Check the connection is not busy
     assert(pending_data==false);
@@ -32,22 +31,20 @@ void Connection::send(vector<DataPackage*> data_p) {
 	this->current_capacity += current_package->get_size_package(); //Increasing the amount of data in the connection
     }
 #endif
-    std::cout<< "connection send start"<<std::endl;
     this->data = data_p; //list of pointers assignment. All the vectors are replicated to save a copy and track it.
     this->pending_data = true;
+    std::cout<<"[CONNECTION SEND] send data"<<std::endl;
 
     //Tracking parameters
     this->connectionStats.n_sends+=1;
-    std::cout<< "connection send()"<<std::endl;
     return; 
 }
 
 //Return the packages from the interconnection
 vector<DataPackage*> Connection::receive() {
-    std::cout<<"receive data"<< std::endl;
     if(this->pending_data) {
-
-            this->pending_data = false;
+        std::cout<<"[CONNECTION RECEIVE] receive data"<< std::endl;
+        this->pending_data = false;
 	    return this->data;
     }
     //If there is no pending data
