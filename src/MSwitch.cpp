@@ -351,28 +351,27 @@ void MSwitch::cycle() { //Computing a cycle
         }
         fifo_to_read = activation_fifo;
         if(this->inputForwardingEnabled && (current_n_windows > 0)) {
-            std::cout<< "this->inputForwardingEnabled && (current_n_windows > 0)" << std::endl;
+            //std::cout<< "this->inputForwardingEnabled && (current_n_windows > 0)" << std::endl;
             //If inputforwarding is enabled and this is an iteration in which we have to use the forwarding inputs then we take them as inputs
             //assert(!forwarding_input_fifo->isEmpty());
             fifo_to_read = forwarding_input_fifo;
         }
         //Prefetching could be implemented jut changing the condition activation->fifo->isEmpty for a condition that check that the fifo is greater than a certain value to prefetch. 
         if((!fifo_to_read->isEmpty()) && (weight_fifo->size() >= n_folding)) { //If both queues are not empty
-            std::cout<< "!fifo_to_read->isEmpty()) && (weight_fifo->size() >= n_folding)" << std::endl;
             DataPackage* activation = fifo_to_read->pop(); //Get the activation and remove from fifo
             
             DataPackage* weight = weight_fifo->pop(); //get the weight and then pushing again at the end of the fifo
             weight_fifo->push(weight);
             data_t data_read = activation->get_data();
             DataPackage* pck_result = perform_operation_2_operands(activation, weight); //Creating the psum package
-            std::cout<< "calculating activation & weight" << std::endl;
+            //std::cout<< "calculating activation & weight" << std::endl;
             psum_fifo->push(pck_result); //Sending to the output fifo to be read in next cycle]
-            std::cout<<"psum fifo size:"<< psum_fifo->size()<<std::endl;
+            //std::cout<<"psum fifo size:"<< psum_fifo->size()<<std::endl;
                        //data_t data_read = activation->get_data();
                         //std::cout << "Data Received by MS " << this->num << ": " << data_read << std::endl; 
 
             this->send(); //Sending to the Adder Network //TODO check flow control
-            std::cout << "send result"<< std::endl;
+            //std::cout << "send result"<< std::endl;
             //if(this->outputForwardingEnabled) { //If the multiplexer is configured to send the current activation to the fw connection
             //    this->forward(activation);
             //}  
@@ -381,7 +380,7 @@ void MSwitch::cycle() { //Computing a cycle
             //Store the data to forward if this is not the last window and the output is enabled for this MS
       //TODO el problema esta aqui con current_n_windows 
             if((current_n_windows < (n_windows-1)) && this->outputForwardingEnabled) { //Last window is n_windows-1
-                std::cout<< "(current_n_windows < (n_windows-1)) && this->outputForwardingEnabled" << std::endl;
+               // std::cout<< "(current_n_windows < (n_windows-1)) && this->outputForwardingEnabled" << std::endl;
                 DataPackage* activation_forwarded = new DataPackage(activation); //copy to be sent later to the fw link
                 forwarding_output_fifo->push(activation_forwarded); //introducing the activation into the fifo to send the data later to the fw link. TODO this shit makes no sense at all.
                 activation_forwarded = forwarding_output_fifo->pop();
@@ -394,11 +393,11 @@ void MSwitch::cycle() { //Computing a cycle
           
             current_n_folding+=1;
             if(current_n_folding == n_folding) {
-                std::cout<< "current_n_folding == n_folding" << std::endl;
+                //std::cout<< "current_n_folding == n_folding" << std::endl;
                 current_n_windows+=1;
                 current_n_folding=0;
                 if(current_n_windows == n_windows) {
-                    std::cout<< "current_n_windows == n_windows" << std::endl;
+                    //std::cout<< "current_n_windows == n_windows" << std::endl;
                     current_n_windows = 0;
                 }
                 //We do not check if we have to update current_n_windows here since the value is neccesary to know the control logic

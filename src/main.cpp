@@ -318,7 +318,7 @@ bool runSparseGEMMCommand(int argc, char *argv[]) {
         std::cout << input_matrix[i] << std::endl;
 
 
-    float* filter_matrix {new float [K*N] {1, 1, 1, 1,1,1,1,1,2,2,2,2}};
+    float* filter_matrix {new float [K*M] {1, 1, 1, 1,1,1,1,1,2,2,2,2}};
     //float* filter_matrix {new float [K*N] {2,2,2,2}};
     std::cout << "check filter matrix" << std::endl;
     for (int i = 0; i<K*N; i++)

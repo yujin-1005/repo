@@ -82,7 +82,7 @@ void SparseSDMemory::setLayer(DNNLayer* dnn_layer, address_t input_address, addr
     this->dnn_layer = dnn_layer;
     this->mapping_table = mapping_table;
     assert(this->dnn_layer->get_layer_type()==GEMM);  // This controller only supports GEMM with sparsity
-    this->dataflow = dataflow; 
+    this->dataflow = dataflow;
 
     this->output_address = output_address;
     this->layer_loaded = true;
@@ -258,6 +258,8 @@ void SparseSDMemory::setSparseMetadata(metadata_address_t MK_metadata, metadata_
 void SparseSDMemory::cycle() {
     //Sending input data over read_connection
     assert(this->layer_loaded);  // Layer has been loaded
+
+
     //assert(this->metadata_loaded); //Metadata for sparsity has been loaded
     std::vector<DataPackage*> data_to_send; //Input and weight temporal storage
     std::vector<DataPackage*> psum_to_send; 
@@ -617,8 +619,8 @@ void SparseSDMemory::cycle() {
 	    current_output_iteration++;
         std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION : OUTPUT_SIZE_ITERATION = " << current_output_iteration << " : " << output_size_iteration << std::endl;
 	    if(current_output_iteration==output_size_iteration) {
-                current_output_iteration = 0;
-		sta_iter_completed=true;
+            current_output_iteration = 0;
+            sta_iter_completed=true;
 	    }
 
             std::cout << "write fifo i = " << i << std::endl;
