@@ -374,7 +374,7 @@ void SparseSDMemory::cycle() {
 	        }
 	    }
 
-	    if((this->configurationVNs.size() > 0) && (row_index<R)) {
+	    if((this->configurationVNs.size() >= 0) && (row_index<R)) {
                 //Find if there is a last cluster
 		    int remaining_values = 0;
             for(int r=row_index; r<R; r++) {
@@ -384,7 +384,7 @@ void SparseSDMemory::cycle() {
             }
 		//Its the last element
         //yujin: row_index < R이기 때문에 위에 if에서는 SparseVN을 만들 수 없음
-            if(remaining_values == 0) {
+            if(remaining_values >= 0) {
 		        if(n_current_cluster > 0) {
 			        SparseVN VN(n_current_cluster, false);
                     this->configurationVNs.push_back(VN); //Adding to the list
@@ -424,7 +424,19 @@ void SparseSDMemory::cycle() {
 
 	    else { //If there is at least one cluster, then all of them has size K and it is necessary to stream K
 		   //K elements
-		   this->sta_last_j_metadata=this->R; //yujin: ???????
+            int remaining_values = 0;
+            for(int r=row_index; r<R; r++) {
+                if(this->mapping_table[row_index * M*K + i]) {
+                    remaining_values+=1;
+                }
+            }
+            if(remaining_values > 0) {
+                this->sta_last_j_metadata=row_index;
+            }
+
+            else {
+                this->sta_last_j_metadata = R;
+            } //yujin: ???????
 
             }
         count_column_index = i;
@@ -549,14 +561,18 @@ void SparseSDMemory::cycle() {
 
         else {
             int prev_last_count_column_index = last_count_column_index;
+            int row_size = this->R;
+            std::cout<<"sta_last_j_metadata"<<this->sta_last_j_metadata<<std::endl;
             for (int i =  last_count_column_index; i <= this->count_column_index; i++) {
                 if(i==M*K)
                     break;
-                for (int j = 0; j < this->R; j++) {
+                if(i==count_column_index){
+                    row_size = this->sta_last_j_metadata;
+                }
+                for (int j = 0; j < row_size; j++) {
                     if (mapping_table[j * M * K + i]) {
                         str_counters_table[j * M * K + i] = j;
-                        std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i
-                                  << " / data :" << j << std::endl;
+                        std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
                     }
                 }
                 prev_last_count_column_index = i+1;
@@ -680,7 +696,7 @@ void SparseSDMemory::cycle() {
 	}
 
 	else {
-	    this->sta_current_index_metadata+=this->configurationVNs.size(); //yujin: error!!!!
+	    this->sta_current_index_metadata+=this->count_column_index+1; //yujin: error???
 	    std::cout << "STONNE: VN complete num (" << this->sta_current_index_metadata << ")" << std::endl;
 	    this->sta_current_j_metadata = 0;
 	}
