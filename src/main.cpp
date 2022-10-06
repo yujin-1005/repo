@@ -400,14 +400,7 @@ bool runSparseGEMMCommand(int argc, char *argv[]) {
     //Running STONNE
     Stonne* stonne_instance = new Stonne(stonne_cfg); //Creating instance of the simulator
     stonne_instance->loadGEMM(layer_name, N, K, M, input_matrix, filter_matrix, mapping_table, acc_output, dataflow); //Loading GEMM
-    for (int i = 0; i<M*K; i++)
-        std::cout << input_matrix[i] << std::endl;
-    std::cout << "check filter matrix" << std::endl;
-    for (int i = 0; i<K*N; i++)
-        std::cout << filter_matrix[i]<<std::endl;
-    std::cout << "check mapping_table" << std::endl;
-    for (int i = 0; i<M*K*4; i++)
-        std::cout << mapping_table[i]<<std::endl;
+
 
     stonne_instance->run(); //Running the simulator
     

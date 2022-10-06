@@ -53,7 +53,13 @@ private:
     unsigned int n_write_ports; 
     unsigned int write_buffer_capacity;
     unsigned int port_width;
-
+    unsigned int prev_weight; //yujin
+    unsigned int cur_weight;
+    unsigned int count_column_index;
+    //unsigned int count_row_index;
+    unsigned int last_count_column_index;
+    unsigned int init_point_str;
+    unsigned int end_point_str;
     unsigned int ms_size_per_input_port;
     //Fifos
     Fifo* write_fifo; //Fifo uses to store the writes before going to the memory
