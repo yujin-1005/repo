@@ -276,21 +276,22 @@ void SparseSDMemory::cycle() {
     //data_t cur_weight;
 
     if(current_state==CONFIGURING) {   //If the architecture has not been configured
-        std::cout<< "[CURRENT_STATE = CONFIGURING] start count VN size & set Network"<<std::endl;
-        int i=sta_current_index_metadata;  //metadata의 column index
+        std::cout << "[CURRENT_STATE = CONFIGURING] start count VN size & set Network" << std::endl;
+        int i = sta_current_index_metadata;  //metadata의 column index
 
-	int row_index=0;  //yujin: row index
-	int n_ms = 0; //yujin: Number of multipliers assigned
-	int n_current_cluster = 0; //yujin: 1개의 column에서의 1의 개수 count-> sparseVN -> (나중에 adder tree에 VN size 전달)
-	this->configurationVNs.clear();
-	this->vnat_table.clear();
+        //int row_index=0;  //yujin: row index
+        int n_ms = 0; //yujin: Number of multipliers assigned
+        int n_current_cluster = 0; //yujin: 1개의 column에서의 1의 개수 count-> sparseVN -> (나중에 adder tree에 VN size 전달)
+        this->configurationVNs.clear();
+        this->vnat_table.clear();
 
-	if(this->sta_current_j_metadata > 0)  { // We are managing one cluster with folding
-        std::cout<< "[STA_CURRENT_J_METADATA > 0] we are managing one cluster with folding"<<std::endl;
-        n_ms++; //One for the psum
-	    row_index=this->sta_current_j_metadata; //yujin: 중간에 끊긴 경우(= multiplier의 num < 1개의 column안에서 row index) 다음 row index부터 시작
-	    while((n_ms < this->num_ms) && (row_index < R)) { //yujin: R = mapping table의 row 수
-        //TODO change MK if it is another dw
+        /*
+	    if(this->sta_current_j_metadata > 0)  { // We are managing one cluster with folding
+            std::cout<< "[STA_CURRENT_J_METADATA > 0] we are managing one cluster with folding"<<std::endl;
+            n_ms++; //One for the psum
+	        //row_index=this->sta_current_j_metadata; //yujin: 중간에 끊긴 경우(= multiplier의 num < 1개의 column안에서 row index) 다음 row index부터 시작
+	         while((n_ms < this->num_ms) && (sta_current_j_metadata*M*K+i < M*K*4)&&(i<M*K)) { //yujin: R = mapping table의 row 수
+                //TODO change MK if it is another dw
                 //TODO YUJUIN : break if diff weight
 
                 //if(prev_weight != cur_weight) {
@@ -298,25 +299,17 @@ void SparseSDMemory::cycle() {
 
                    // break;
                 //}
-                if(this->mapping_table[row_index * M*K + i]) { //yujin: STA_metadat는 mappind table에서 하나의 column을 의미
-                //yujin: i=current column index
+                if(this->mapping_table[sta_current_j_metadata * M*K + i]) { //yujin: STA_metadat는 mappind table에서 하나의 column을 의미
+                    //yujin: i=current column index
                     //Add to the cluster
-                    this->sta_counters_table[row_index * M*K + i]=n_ms; //DEST
-                    std::cout<<"[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] "<<"mapping_table index = "<<row_index * M*K+ i<< "multiplier destination"<< n_ms<<std::endl;
+                    this->sta_counters_table[sta_current_j_metadata * M*K + i]=n_ms; //DEST
+                    std::cout<<"[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] "<<"mapping_table index = "<<sta_current_j_metadata * M*K+ i<< "multiplier destination"<< n_ms<<std::endl;
                     //yujin: 1이면, multiplier 할당
                     n_ms++; //yujin: 사용한 multiplier의 수 count
                     n_current_cluster++; 
                 }
-                
-        row_index++; //yujin: 다음 row로 이동
-	    }
-	    /*
-	    //Making sure that if there is next cluster, that cluster have size >=3
-	    if((j < K) && ((K-j) < 3)) {
-                int n_elements_to_make_cluster_3 = 3-(K-j);
-                j-=n_elements_to_make_cluster_3;
-                n_current_cluster-=n_elements_to_make_cluster_3;
-	    } */
+                sta_current_j_metadata++; //yujin: 다음 row로 이동
+	        }
 
         SparseVN VN(n_current_cluster, true); //Here folding is enabled and the SparseVN increments 1 to size
         //yujin: folding enable flag true -> 중간 row에서 부터 시작한 값
@@ -325,23 +318,25 @@ void SparseSDMemory::cycle() {
 
 	    //Searching if there are more values in the next cluster. If not, update sta_last_j_metadata to K to indicate that in the next iteration the next sta dim must be evaluated
 	    int remaining_values = 0; //yujin: VN을 만들어 준 다음 row index부터 마지막 row index까지 1이 남아있는지 확인
-	    for(int r=row_index; r<R; row_index++) {
+	    for(int r=sta_current_j_metadata; r<R; r++) {
                 if(this->mapping_table[r * M*K + i]) {
                     remaining_values+=1;
 	        }
 	    }
 	    if(remaining_values > 0) { //yujin: remaining_values가 있으면, j부터 k까지 다시 count해서 SparseVN을 만들어주어야 한다
-	        this->sta_last_j_metadata=row_index;
+	        this->sta_last_j_metadata=sta_current_j_metadata;
             //yujin: sta_last_j_metadata = SparseVN을 만들어 준 다음 row의 index = 다음에 시작할 row index
 	    }
 
 	    else {
                 this->sta_last_j_metadata = R;
 	    }
-	}                                                                                                                                                                                                   
+	}
+    */
 
-	else { //yujin: folding이 아닌경우 = row index 0부터 시작하는 경우 (sta_current_j_metadata = 0)
-	    while((n_ms < this->num_ms) && (row_index*M*K+i < M*K*4)&&(i<M*K)) { //TODO change MK if it is another dw
+        //else { //yujin: folding이 아닌경우 = row index 0부터 시작하는 경우 (sta_current_j_metadata = 0)
+        while ((n_ms < this->num_ms) && (sta_current_j_metadata * M * K + i < M * K * 4) &&
+               (i < M * K)) { //TODO change MK if it is another dw
             //yujin: i<R 조건 추가
             //TODO YUJUIN : break if diff weight
             //std::cout<<"[PREV_WEIGHT] prev_weight = "<< prev_weight << " cur_weight"<<cur_weight<< std::endl;
@@ -349,166 +344,162 @@ void SparseSDMemory::cycle() {
 
             // break;
             //}
-            if(this->mapping_table[row_index * M*K + i]) { //If the bit is enabled in the stationary bitmap
+
+            if (this->mapping_table[sta_current_j_metadata * M * K +
+                                    i]) { //If the bit is enabled in the stationary bitmap
                 //Add to the cluster
-		        this->sta_counters_table[row_index * M*K + i]=n_ms; //DEST
-                std::cout<<"[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] "<<"mapping_table index = "<<row_index * M*K+ i<< "multiplier destination"<<n_ms<<std::endl;
-		        n_ms++;
+                this->sta_counters_table[sta_current_j_metadata * M * K + i] = n_ms; //DEST
+                std::cout << "[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] " << "mapping_table index = "
+                          << sta_current_j_metadata * M * K + i << "multiplier destination" << n_ms << std::endl;
+                n_ms++;
                 n_current_cluster++;
-	        }
 
-
-                row_index++; // Next elem in vector
-	        if(row_index==R) { //yujin: row index = R인 경우에만 SparseVN을 만들어주고 있음
-		    //Change cluster since we change of vector
-                row_index=0; //elem = 0
-		        i++; // Next vector
-
-		        if(n_current_cluster > 0) {                                                                                           
-                        //Creating the cluster for this row
-		            SparseVN VN(n_current_cluster, false);
-                    this->configurationVNs.push_back(VN); //Adding to the list 
-		            this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
-		            n_current_cluster = 0;
-		        }
-	        }
-	    }
-
-	    if((this->configurationVNs.size() >= 0) && (row_index<R)) {
-                //Find if there is a last cluster
-		    int remaining_values = 0;
-            for(int r=row_index; r<R; r++) {
-                if(this->mapping_table[row_index * M*K + i]) {
-                    remaining_values+=1;
-               }
             }
-		//Its the last element
-        //yujin: row_index < R이기 때문에 위에 if에서는 SparseVN을 만들 수 없음
-            if(remaining_values >= 0) {
-		        if(n_current_cluster > 0) {
-			        SparseVN VN(n_current_cluster, false);
+
+
+            sta_current_j_metadata++; // Next elem in vector
+            std::cout << "row index = " << sta_current_j_metadata << std::endl;
+            if (sta_current_j_metadata == R) { //yujin: row index = R인 경우에만 SparseVN을 만들어주고 있음
+                //Change cluster since we change of vector
+                sta_current_j_metadata = 0; //elem = 0
+                i++; // Next vector
+                std::cout << "row index , i = " << i << std::endl;
+
+                if (n_current_cluster > 0) {
+                    //Creating the cluster for this row
+                    SparseVN VN(n_current_cluster, false);
                     this->configurationVNs.push_back(VN); //Adding to the list
                     this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
-		        }
-
-            }
-	    
-	    }
-
-	    if(this->configurationVNs.size()==0) { //If any entire cluster fits, then folding is needed to manage this cluster
-		/*
-		if((K-j) < 3) { //The next cluster must have cluster size greater or equal than 3
-                    int n_elements_to_make_cluster_3 = 3-(K-j);
-		    j-=n_elements_to_make_cluster_3;
-		    n_current_cluster-=n_elements_to_make_cluster_3;
-		}
-		*/
-	        SparseVN VN(n_current_cluster, false); //Here folding is still disabled as this is the first iteration
-	        this->configurationVNs.push_back(VN);
-		    this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
-		           //Searching if there are more values in the next cluster. If not, update sta_last_j_metadata to K to indicate that in the next iteration the next sta dim must be evaluated
-            int remaining_values = 0;
-            for(int r=row_index; r<R; r++) {
-                if(this->mapping_table[row_index * M*K + i]) {
-                    remaining_values+=1;
+                    n_current_cluster = 0;
                 }
             }
-            if(remaining_values > 0) {
-                this->sta_last_j_metadata=row_index;
+        }
+
+        if (sta_current_j_metadata < R) {
+            //Find if there is a last cluster
+            if (n_current_cluster > 0) {
+                //Creating the cluster for this row
+                SparseVN VN(n_current_cluster, false);
+                this->configurationVNs.push_back(VN); //Adding to the list
+                this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
+                n_current_cluster = 0;
             }
 
-             else {
-                this->sta_last_j_metadata = R;
-            }
-	    }
-
-	    else { //If there is at least one cluster, then all of them has size K and it is necessary to stream K
-		   //K elements
             int remaining_values = 0;
-            for(int r=row_index; r<R; r++) {
-                if(this->mapping_table[row_index * M*K + i]) {
-                    remaining_values+=1;
+            for (int r = sta_current_j_metadata; r < R; r++) {
+                if (this->mapping_table[sta_current_j_metadata * M * K + i]) {
+                    remaining_values += 1;
                 }
             }
-            if(remaining_values > 0) {
-                this->sta_last_j_metadata=row_index;
-            }
-
-            else {
+            if (remaining_values > 0) {
+                this->sta_last_j_metadata = sta_current_j_metadata + 1;
+            } else {
                 this->sta_last_j_metadata = R;
-            } //yujin: ???????
-
             }
+        }
+
+            /*
+            if(this->configurationVNs.size()==0) { //If any entire cluster fits, then folding is needed to manage this cluster
+
+                SparseVN VN(n_current_cluster, false); //Here folding is still disabled as this is the first iteration
+                this->configurationVNs.push_back(VN);
+                this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
+                       //Searching if there are more values in the next cluster. If not, update sta_last_j_metadata to K to indicate that in the next iteration the next sta dim must be evaluated
+                int remaining_values = 0;
+                for(int r=sta_current_j_metadata; r<R; r++) {
+                    if(this->mapping_table[sta_current_j_metadata * M*K + i]) {
+                        remaining_values+=1;
+                    }
+                }
+                if(remaining_values > 0) {
+                    this->sta_last_j_metadata=sta_current_j_metadata;
+                }
+
+                 else {
+                    this->sta_last_j_metadata = R;
+                }
+            }
+            */
+
+        else { //If there is at least one cluster, then all of them has size K and it is necessary to stream K
+            //K elements
+            int remaining_values = 0;
+            for (int r = sta_current_j_metadata; r < R; r++) {
+                if (this->mapping_table[sta_current_j_metadata * M * K + i]) {
+                    remaining_values += 1;
+                }
+            }
+            if (remaining_values > 0) {
+                this->sta_last_j_metadata = sta_current_j_metadata + 1;
+            } else {
+                this->sta_last_j_metadata = R;
+            }
+        }
         count_column_index = i;
-
-    } //end else whole rows
-
+        // } //end else whole rows
 
 
+        //Calculating the STR SOURCE TABLE with the indexes of each value
 
-
-
-	//Calculating the STR SOURCE TABLE with the indexes of each value
-
-	//Once the VNs has been selected, lets configure the RN and MN
-    // Configuring the multiplier network
-	if(this->configurationVNs.size()==0) { //yujin: configurationVNs에 아무것도 들어 있지 않은 경우
+        //Once the VNs has been selected, lets configure the RN and MN
+        // Configuring the multiplier network
+        if (this->configurationVNs.size() == 0) { //yujin: configurationVNs에 아무것도 들어 있지 않은 경우
             std::cout << "Cluster size exceeds the number of multipliers in column " << this->sta_current_index_metadata << std::endl;
-	    assert(false);
-	}
-	for(int i=0; i<this->configurationVNs.size(); i++) {
+            assert(false);
+        }
+        for (int i = 0; i < this->configurationVNs.size(); i++) {
             std::cout << "[CHECK VN SIZE USING MAPPING TABLE] VN size = " << this->configurationVNs[i].get_VN_Size() << std::endl;
         }
-    this->sdmemoryStats.n_sta_vectors_at_once_avg+=this->configurationVNs.size(); //accumul
-	if(this->configurationVNs.size() > this->sdmemoryStats.n_sta_vectors_at_once_max) {
+        this->sdmemoryStats.n_sta_vectors_at_once_avg += this->configurationVNs.size(); //accumul
+        if (this->configurationVNs.size() > this->sdmemoryStats.n_sta_vectors_at_once_max) {
             this->sdmemoryStats.n_sta_vectors_at_once_max = this->configurationVNs.size();
-	}
-	this->sdmemoryStats.n_reconfigurations++;
+        }
+        this->sdmemoryStats.n_reconfigurations++;
 
-
-	std::cout << "Configuring the MULTIPLIER & REDUCTION Networks" << std::endl;
-	this->multiplier_network->resetSignals(); //Reseting the values to default
-	this->multiplier_network->configureSparseSignals(this->configurationVNs, this->dnn_layer, this->num_ms);
-	//Configuring the reduce network
-	this->reduce_network->resetSignals(); //Reseting the values to default
-	this->reduce_network->configureSparseSignals(this->configurationVNs, this->dnn_layer, this->num_ms);
-	std::cout << "End Networks configuring" << std::endl;
-	//yujin: Number of psums to calculate in this iteration
-	this->output_size_iteration=this->configurationVNs.size();
-
+        std::cout << "Configuring the MULTIPLIER & REDUCTION Networks" << std::endl;
+        this->multiplier_network->resetSignals(); //Reseting the values to default
+        this->multiplier_network->configureSparseSignals(this->configurationVNs, this->dnn_layer, this->num_ms);
+        //Configuring the reduce network
+        this->reduce_network->resetSignals(); //Reseting the values to default
+        this->reduce_network->configureSparseSignals(this->configurationVNs, this->dnn_layer, this->num_ms);
+        std::cout << "End Networks configuring" << std::endl;
+        //yujin: Number of psums to calculate in this iteration
+        this->output_size_iteration = this->configurationVNs.size();
     }
 
 
 
     else if(current_state == DIST_STA_MATRIX) {
         int address_offrset = sta_current_index_metadata;
-       //Distribution of the stationary matrix
+        //Distribution of the stationary matrix
         std::cout<< "[DIST_STA_MATRIX] Make weight destination & data"<<std::endl;
-       unsigned int dest = 0; //MS destination
-       //unsigned int sub_address = 0;
+        //std::cout<<"[sta_current_index_metadata]"<<sta_current_index_metadata<<std::endl;
+        unsigned int dest = 0; //MS destination
+        //unsigned int sub_address = 0;
     
         for(int i=0; i<this->configurationVNs.size(); i++) {
-	        int j=0;
+            /*
 	        if(this->configurationVNs[i].getFolding()) {
              j=1;
 	        dest++; //Avoid the one in charge of the psum
 	        }
-
-            for(; j<this->configurationVNs[i].get_VN_Size(); j++) {
-	       //Accessing to memory
-	        //data_t data = this->STR_address[i]; //yujin error!: weight address =  weight value
+            */
+            //std::cout<<"[address_offrset]"<<address_offrset<<std::endl;
+            for(int j = 0; j<this->configurationVNs[i].get_VN_Size(); j++) {
+	            //Accessing to memory
+	            //data_t data = this->STR_address[i]; //yujin error!: weight address =  weight value
                 data_t data = this->STR_address[address_offrset];
                 //prev_weight =data;
-            //std::cout<< "[PREV_WEIGHT] prev_weight value is : "<<prev_weight <<std::endl;
+                //std::cout<< "[PREV_WEIGHT] prev_weight value is : "<<prev_weight <<std::endl;
 
-	        sdmemoryStats.n_SRAM_weight_reads++;
-	        this->n_ones_sta_matrix++;
+	            sdmemoryStats.n_SRAM_weight_reads++;
+	            this->n_ones_sta_matrix++;
 
-	        DataPackage* pck_to_send = new DataPackage(sizeof(data_t), data, WEIGHT, 0, UNICAST, dest);
-            //std::cout<<"dest, data = " << dest <<data<<std::endl;
-	        this->sendPackageToInputFifos(pck_to_send);
-            dest++;
-            //sub_address++;
+	            DataPackage* pck_to_send = new DataPackage(sizeof(data_t), data, WEIGHT, 0, UNICAST, dest);
+                //std::cout<<"dest, data = " << dest <<data<<std::endl;
+	            this->sendPackageToInputFifos(pck_to_send);
+                dest++;
+                //sub_address++;
 	        }
             address_offrset++;
         }
@@ -541,93 +532,105 @@ void SparseSDMemory::cycle() {
             }
         }
 */
-    else if(current_state == DIST_STR_MATRIX) {
-        int count=0;
-        int k=0;
-        std::cout<< "DIST_STR_MATRIX"<<sta_current_index_metadata<<std::endl;
-        std::cout<< "last_count_column_index"<<last_count_column_index<<std::endl;
-        std::cout<< "column index"<<count_column_index<<std::endl;
-        //yujin: make input index (use data)
-        if(this->sta_current_j_metadata > 0)  {
-            for (int i = sta_current_j_metadata; i <= sta_current_index_metadata + this->configurationVNs.size(); i++) {
-                for (int j = 0 ; j < this->R; j++) {
-                    if (mapping_table[j * M*K + i] && (j <= this->configurationVNs.size())) {
-                        str_counters_table[j * M*K + i] = j;
-                        std::cout << "test counter table" << " nonzero mapping table index check :" << j * M*K + i <<" / data :" << j <<std::endl;
-                    }
-                }
-            }
-        }
 
-        else {
+    else if(current_state == DIST_STR_MATRIX) {
+        std::cout << "DIST_STR_MATRIX" << sta_current_index_metadata << std::endl;
+        std::cout << "last_count_column_index" << last_count_column_index << std::endl;
+        std::cout << "column index" << count_column_index << std::endl;
+        //yujin: make input index (use data)
+        std::cout << "sta_current_j_metadata" << sta_current_j_metadata << std::endl;
+
+        /*
+        if(this->sta_current_j_metadata > 0)  {
             int prev_last_count_column_index = last_count_column_index;
             int row_size = this->R;
             std::cout<<"sta_last_j_metadata"<<this->sta_last_j_metadata<<std::endl;
-            for (int i =  last_count_column_index; i <= this->count_column_index; i++) {
+            for (int i = last_count_column_index; i <= count_column_index; i++) {
                 if(i==M*K)
                     break;
                 if(i==count_column_index){
                     row_size = this->sta_last_j_metadata;
                 }
-                for (int j = 0; j < row_size; j++) {
-                    if (mapping_table[j * M * K + i]) {
-                        str_counters_table[j * M * K + i] = j;
-                        std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
+                for (int j = 0 ; j < row_size; j++) {
+                    if (mapping_table[j * M*K + i]) {
+                        str_counters_table[j * M*K + i] = j;
+                        std::cout << "test counter table" << " nonzero mapping table index check :" << j * M*K + i <<" / data :" << j <<std::endl;
                     }
                 }
                 prev_last_count_column_index = i+1;
             }
             last_count_column_index = prev_last_count_column_index;
         }
+         */
 
-       int init_point_str = this->sta_current_index_metadata;
-       //std::cout<< "init_point_str" << init_point_str<<std::endl;
-       int end_point_str = sta_current_index_metadata + this->configurationVNs.size();
-       //std::cout<< "end_point_str" << end_point_str<<std::endl;
-       if(this->sta_current_j_metadata > 0) { //If folding is enabled there is just a row on  fly]
-           assert(this->configurationVNs.size()==1);
-           //send psum
-	        unsigned int addr_offset = (sta_current_index_metadata)*OUT_DIST_VN + str_current_index*OUT_DIST_VN_ITERATION;
-	        bool* destinations = new bool[this->num_ms];
-            for(int i=0; i<this->num_ms; i++) {
-                destinations[i]=false;
+        //else {
+        int prev_last_count_column_index = last_count_column_index;
+        int row_size = this->R;
+        std::cout << "sta_last_j_metadata" << this->sta_last_j_metadata << std::endl;
+        for (int i = last_count_column_index; i <= this->count_column_index; i++) {
+            if (i == M * K)
+                break;
+            if (i == count_column_index) {
+                row_size = this->sta_last_j_metadata;
+            }
+            for (int j = 0; j < row_size; j++) {
+                if (mapping_table[j * M * K + i]) {
+                    str_counters_table[j * M * K + i] = j;
+                    std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
+                }
+            }
+            prev_last_count_column_index = i + 1;
+        }
+        last_count_column_index = prev_last_count_column_index;
+        //}
+
+        int init_point_str = this->sta_current_index_metadata;
+        //std::cout<< "init_point_str" << init_point_str<<std::endl;
+        int end_point_str = sta_current_index_metadata + this->configurationVNs.size();
+        //std::cout<< "end_point_str" << end_point_str<<std::endl;
+        /*
+        if (this->sta_current_j_metadata > 0) { //If folding is enabled there is just a row on  fly]
+            assert(this->configurationVNs.size() == 1);
+            //send psum
+            unsigned int addr_offset = sta_current_index_metadata;
+            bool *destinations = new bool[this->num_ms];
+            for (int i = 0; i < this->num_ms; i++) {
+                destinations[i] = false;
             }
 
-	        destinations[0]=true;
+            destinations[0] = true;
             //std::cout<< "addr_offset: "<<addr_offset<<std::endl;
             //std::cout << addr_offset<<std::endl;
 
-	        data_t psum = this->output_address[addr_offset];  //Reading the current psum
-            std::cout<< "output_address[addr_offset]: "<<addr_offset<<std::endl;
-            std::cout << output_address[addr_offset] <<std::endl;
-	        DataPackage* pck = new DataPackage(sizeof(data_t), psum, PSUM,0, MULTICAST, destinations, this->num_ms);
+            data_t psum = this->output_address[addr_offset];  //Reading the current psum
+            std::cout << "output_address[addr_offset]: " << addr_offset << std::endl;
+            std::cout << output_address[addr_offset] << std::endl;
+            DataPackage *pck = new DataPackage(sizeof(data_t), psum, PSUM, 0, MULTICAST, destinations, this->num_ms);
             this->sdmemoryStats.n_SRAM_psum_reads++; //To track information
-	        this->sendPackageToInputFifos(pck);
-	    }
-
-       for(int j=init_point_str; j<end_point_str; j++) {   //For each element in the current vector in the str matrix
-
-         //Creating the bit vector for this value
+            this->sendPackageToInputFifos(pck);
+        }
+        */
+        for (int j = init_point_str; j < end_point_str; j++) {   //For each element in the current vector in the str matrix
+            //Creating the bit vector for this value
             data_t data;
 
-            for(int i=0; i<this->R; i++){
-                if(mapping_table[i*M*K+j]){
-                    unsigned int dest = sta_counters_table[i * M*K + j];
-                    unsigned int src = str_counters_table[i * M*K + j];
+            for (int i = 0; i < this->R; i++) {
+                if (mapping_table[i * M * K + j]) {
+                    unsigned int dest = sta_counters_table[i * M * K + j];
+                    unsigned int src = str_counters_table[i * M * K + j];
                     data = STA_address[src];
                     std::cout << "data" << STA_address[src] << std::endl;
                     sdmemoryStats.n_SRAM_input_reads++;
 
-                    DataPackage* pck = new DataPackage(sizeof(data_t), data,IACTIVATION, 0, UNICAST, dest);
+                    DataPackage *pck = new DataPackage(sizeof(data_t), data, IACTIVATION, 0, UNICAST, dest);
                     this->sendPackageToInputFifos(pck);
                     //std::cout<<"sendPackageToInputFifos"<<std::endl;
-                }
-                else{
-                    data=0.0; //If the STA matrix has a value then the STR matrix must be sent even
+                } else {
+                    data = 0.0; //If the STA matrix has a value then the STR matrix must be sent even
                 }
             }
-       }
-       str_current_index++;
+        }
+        str_current_index++;
     }
 
 
@@ -686,19 +689,24 @@ void SparseSDMemory::cycle() {
 	   // if(this->configurationVNs[0].getFolding()) {
            //     this->sta_current_j_metadata-=1;
 	   // }
-
+        // yujin : next column
+        // sta_current_j_metadata : current row
+        // sta_current_index_metadata : next column
+        // count_column_index : current column
 	    if(this->sta_current_j_metadata == this->R) { //If this is the end of the cluster, it might start to the next
-            std::cout<< "sta current j metadata == R"<<std::endl;
-                this->sta_current_index_metadata+=1;
+            std::cout<< "sta current j metadata" <<sta_current_index_metadata<<"== R"<<std::endl;
+            std::cout<< "sta current j metadata ++" <<std::endl;
+                //this->sta_current_index_metadata+=1;
+            this->sta_current_index_metadata = count_column_index + 1;
 		this->sta_current_j_metadata = 0;
 		std::cout << "STONNE: VN complete num  (" << this->sta_current_index_metadata <<")" << std::endl;
         }
 	}
 
-	else {
-	    this->sta_current_index_metadata+=this->count_column_index+1; //yujin: error???
+	else { // yujin : remain column
+	    this->sta_current_index_metadata=(this->count_column_index); //yujin: error???
 	    std::cout << "STONNE: VN complete num (" << this->sta_current_index_metadata << ")" << std::endl;
-	    this->sta_current_j_metadata = 0;
+	    //this->sta_current_j_metadata = 0;
 	}
 	unsigned int total_size = 0;
         for(int i=0; i<this->configurationVNs.size(); i++) {
