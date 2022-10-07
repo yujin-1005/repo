@@ -566,6 +566,7 @@ void SparseSDMemory::cycle() {
         //else {
         int prev_last_count_column_index = last_count_column_index;
         int row_size = this->R;
+
         std::cout << "sta_last_j_metadata" << this->sta_last_j_metadata << std::endl;
         for (int i = last_count_column_index; i <= this->count_column_index; i++) {
             if (i == M * K)
@@ -630,9 +631,8 @@ void SparseSDMemory::cycle() {
                 }
             }
         }
-        str_current_index++;
+        //str_current_index++;
     }
-
 
 
     //Receiving output data from write_connection
@@ -643,26 +643,22 @@ void SparseSDMemory::cycle() {
         //Index the data by using the VN Address Table and the VN id of the packages
         for(int i=0; i<write_fifo->size(); i++) {
             DataPackage* pck_received = write_fifo->pop();
-            unsigned int vn = pck_received->get_vn();
+            //unsigned int vn = pck_received->get_vn();
             data_t data = pck_received->get_data();
             this->sdmemoryStats.n_SRAM_psum_writes++; //To track information
-
-	    unsigned int addr_offset = (sta_current_index_metadata+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
-	    vnat_table[vn]++; 
+	        unsigned int addr_offset = sta_current_index_metadata;//+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
+	        //vnat_table[vn]++;
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
             current_output++;
-	    current_output_iteration++;
-        std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION : OUTPUT_SIZE_ITERATION = " << current_output_iteration << " : " << output_size_iteration << std::endl;
+	        current_output_iteration++;
+            std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION : OUTPUT_SIZE_ITERATION = " << current_output_iteration << " : " << output_size_iteration << std::endl;
 	    if(current_output_iteration==output_size_iteration) {
             current_output_iteration = 0;
             sta_iter_completed=true;
 	    }
-
-            std::cout << "write fifo i = " << i << std::endl;
-            std::cout << "write fifo size = " << write_fifo->size() << std::endl;
-
+            //std::cout << "write fifo i = " << i << std::endl;
+            //std::cout << "write fifo size = " << write_fifo->size() << std::endl;
             delete pck_received; //Deleting the current package
-            
         }
     }
 
@@ -682,7 +678,7 @@ void SparseSDMemory::cycle() {
 
     else if(current_state==WAITING_FOR_NEXT_STA_ITER && sta_iter_completed) {
     
-	this->str_current_index = 0;
+	//this->str_current_index = 0;
 	this->sta_iter_completed=false;
         if(this->configurationVNs.size()==1) {//If there is only one VN, then maybe foliding has been needed
             this->sta_current_j_metadata=this->sta_last_j_metadata;
