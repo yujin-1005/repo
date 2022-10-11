@@ -548,6 +548,7 @@ void SparseSDMemory::cycle() {
         std::cout << "DIST_STR_MATRIX : " << last_count_column_index << std::endl;
         std::cout << "last_count_column_index : " << last_count_column_index <<std::endl;
         std::cout << "column index : " << count_column_index << std::endl;
+
         //yujin: make input index (use data)
 
         std::cout << "current_row_index : " << current_row_index << std::endl;
