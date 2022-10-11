@@ -328,8 +328,8 @@ bool runSparseGEMMCommand(int argc, char *argv[]) {
     //yujin: Generating mapping_table!!
 
     unsigned int* mapping_table {new unsigned int[M*K*4] {1,0,0,1, 1, 1, 1, 0, 0,0,0,1
-                                                          ,0,0,1,1, 0,1,1,0, 0,0, 1, 0
-                                                          ,0,1,0,0, 1, 1,0,0, 0,1,0,0
+                                                          ,1,0,1,1, 0,1,1,0, 0,0, 1, 1
+                                                          ,0,1,0,0, 1, 1,0,1, 0,1,0,0
                                                           ,1, 1,0,1, 1,1,1, 0,1, 0,0 ,0}};
 
     /*

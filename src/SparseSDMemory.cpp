@@ -274,8 +274,8 @@ void SparseSDMemory::cycle() {
     std :: cout <<"[START mapping_table column index] = " << start_column_index << std::endl;
 
 
-    //data_t prev_weight;
-    //data_t cur_weight;
+    data_t prev_weight;
+    data_t cur_weight;
 
     if(current_state==CONFIGURING) {   //If the architecture has not been configured
         std::cout << "[CURRENT_STATE = CONFIGURING] start count VN size & set Network" << std::endl;
@@ -686,7 +686,6 @@ void SparseSDMemory::cycle() {
     }
 
 
-
     //Receiving output data from write_connection
     this->receive();
 
@@ -733,57 +732,57 @@ void SparseSDMemory::cycle() {
 
     else if(current_state==WAITING_FOR_NEXT_STA_ITER && sta_iter_completed) {
     
-	//this->str_current_index = 0;
-	this->sta_iter_completed=false;
+	    //this->str_current_index = 0;
+	    this->sta_iter_completed=false;
         //if(this->configurationVNs.size()==1) {//If there is only one VN, then maybe foliding has been needed
         this->current_row_index=this->last_row_next_start_index;
 	   // if(this->configurationVNs[0].getFolding()) {
-           //     this->current_row_index-=1;
-	   // }
+           //this->current_row_index-=1;
+	   //}
         // yujin : next column
         // current_row_index : current row
         // start_column_index : next column
         // count_column_index : current column
 	    if(this->current_row_index == this->R) { //If this is the end of the cluster, it might start to the next
-            std::cout<< "start_column_index" <<start_column_index<<"== R"<<std::endl;
-            std::cout<< "sta current j metadata ++" <<std::endl;
+            std::cout<< "row_index == R : go to next column"<<std::endl;
                 //this->start_column_index+=1;
             this->start_column_index = count_column_index + 1;
 		    this->current_row_index = 0;
-		    std::cout << "STONNE: VN complete num  (" << this->start_column_index <<")" << std::endl;
         }
 	//}
+	    else { // yujin : remain column
+            std::cout<< "row_index != R : remain current column"<<std::endl;
+	        this->start_column_index = this->count_column_index;
+	        std::cout << "STONNE: VN complete num (" << this->start_column_index << ")" << std::endl;
+            //this->current_row_index = 0;
+	    }
 
-	else { // yujin : remain column
-	    this->start_column_index=(this->count_column_index); //yujin: error???
-	    std::cout << "STONNE: VN complete num (" << this->start_column_index << ")" << std::endl;
-	    //this->current_row_index = 0;
-	}
-	unsigned int total_size = 0;
+	    unsigned int total_size = 0;
         for(int i=0; i<this->configurationVNs.size(); i++) {
             total_size++;
-	    if(this->configurationVNs[i].getFolding()) {
-                total_size-=1; //Sustract the -1 of the extra multiplier 
-	    }
-    }
-	this->sta_current_index_matrix+=total_size;
-	if(start_column_index>=M*K-1) { //yujin: this->configurationVNs.size() -> M*K*4
-	    //Calculating sparsity values  and some final stats
-	    //unsigned int sta_metadata_size = this->dim_sta*K;
-	    //unsigned int str_metadata_size = this->dim_str*K;
-	    //unsigned int sta_zeros = sta_metadata_size - this->n_ones_sta_matrix;
-	    //unsigned int str_zeros = str_metadata_size - this->n_ones_str_matrix;
+	        if(this->configurationVNs[i].getFolding()) {
+                total_size-=1; //Sustract the -1 of the extra multiplier
+	        }
+        }
+	    this->sta_current_index_matrix+=total_size;
+	    if((start_column_index>=M*K-1)&&(last_row_next_start_index==0)) { //yujin: this->configurationVNs.size() -> M*K*4
+	        //Calculating sparsity values  and some final stats
+	        //unsigned int sta_metadata_size = this->dim_sta*K;
+	        //unsigned int str_metadata_size = this->dim_str*K;
+	        //unsigned int sta_zeros = sta_metadata_size - this->n_ones_sta_matrix;
+	        //unsigned int str_zeros = str_metadata_size - this->n_ones_str_matrix;
             //sdmemoryStats.sta_sparsity=(counter_t)((100*sta_zeros) / sta_metadata_size);
-	    //sdmemoryStats.str_sparsity=(counter_t)((100*str_zeros) / str_metadata_size);
-	    this->sdmemoryStats.n_sta_vectors_at_once_avg = this->sdmemoryStats.n_sta_vectors_at_once_avg / this->sdmemoryStats.n_reconfigurations;
+	        //sdmemoryStats.str_sparsity=(counter_t)((100*str_zeros) / str_metadata_size);
+	        this->sdmemoryStats.n_sta_vectors_at_once_avg = this->sdmemoryStats.n_sta_vectors_at_once_avg / this->sdmemoryStats.n_reconfigurations;
             this->execution_finished = true; //if the last sta cluster has already be calculated then finish the sim
-	    current_state = ALL_DATA_SENT;
-	}
-	else { 
+	        current_state = ALL_DATA_SENT;
+	    }
+	    else {
             current_state=CONFIGURING;
+	    }
 
-	}
     }
+
     this->send();
 }
 
