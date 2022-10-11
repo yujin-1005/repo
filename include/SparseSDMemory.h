@@ -53,13 +53,17 @@ private:
     unsigned int n_write_ports; 
     unsigned int write_buffer_capacity;
     unsigned int port_width;
-    unsigned int prev_weight; //yujin
+    //yujin: add
+    unsigned int prev_weight;
     unsigned int cur_weight;
     unsigned int count_column_index;
     //unsigned int count_row_index;
     unsigned int last_count_column_index;
     unsigned int init_point_str;
     unsigned int end_point_str;
+    int prev_sta_last_j_metadata;
+    // add end
+
     unsigned int ms_size_per_input_port;
     //Fifos
     Fifo* write_fifo; //Fifo uses to store the writes before going to the memory
@@ -82,16 +86,16 @@ private:
     metadata_address_t output_metadata;
 
     //Counters to calculate SRC and DST
-    unsigned int* sta_counters_table; //Matrix of size rows*columns to figure out the dst of each sta value
+    unsigned int* multiplier_dest_table; //Matrix of size rows*columns to figure out the dst of each sta value
     unsigned int* str_counters_table; //Matrix of size rows*columns of the str matrix to calculate the source of each bit enabled.
 
     //Pointers
     unsigned int str_current_index; //Streaming current index to calculate the next values to stream 
-    unsigned int sta_current_index_metadata; //Stationary matrix current index (e.g., row in MK)
+    unsigned int start_column_index; //Stationary matrix current index (e.g., column in MK)
     unsigned int sta_current_index_matrix; //Index to next element in the sparse matrix
-    unsigned int sta_current_j_metadata; //Index to current element in the same cluster. Used to manage folding
-    unsigned int sta_last_j_metadata;  //Indext to last element in the same cluster. Used to manage folding
-    //the boundaries of a certain fold is sta_current_j_metadata and sta_last_j_metadata
+    unsigned int current_row_index; //Index to current element in the same cluster. Used to manage folding
+    unsigned int last_row_next_start_index;  //Indext to last element in the same cluster. Used to manage folding
+    //the boundaries of a certain fold is current_row_index and last_row_next_start_index
 
     //Signals
     bool configuration_done; //Indicates whether the architecture has been configured to perform the delivering

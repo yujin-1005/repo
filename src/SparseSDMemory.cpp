@@ -38,22 +38,24 @@ SparseSDMemory::SparseSDMemory(id_t id, std::string name, Config stonne_cfg, Con
     this->local_cycle=0;
     this->str_current_index = 0;
     this->current_state = CONFIGURING;
-    this->sta_counters_table = NULL;
+    this->multiplier_dest_table = NULL;
     this->str_counters_table = NULL;
     this->current_output = 0;
     this->output_size = 0;
-    this->sta_current_index_metadata = 0; //Stationary matrix current index (e.g., row in MK)
+    this->start_column_index = 0; //Stationary matrix current index (e.g., row in MK)
     this->sta_current_index_matrix = 0;
     this->prev_weight = 0; //yujin:weight
     this->cur_weight = 0;
     this->sta_iter_completed = false;
     this->current_output_iteration = 0;
     this->output_size_iteration = 0;
-    this->sta_current_j_metadata = 0;
-    this->sta_last_j_metadata = 0;
+    this->current_row_index = 0;
+    this->last_row_next_start_index = 0;
     this->n_ones_sta_matrix=0;
     this->n_ones_str_matrix=0;
     this->last_count_column_index=0;
+
+    this->prev_sta_last_j_metadata =0;
 }
 
 SparseSDMemory::~SparseSDMemory() {
@@ -65,7 +67,7 @@ SparseSDMemory::~SparseSDMemory() {
     }
     
     if(this->layer_loaded) {
-        delete[] sta_counters_table;
+        delete[] multiplier_dest_table;
 	delete[] str_counters_table;
     }
 
@@ -153,8 +155,8 @@ void SparseSDMemory::setLayer(DNNLayer* dnn_layer, address_t input_address, addr
 
 
     this->output_size = dim_sta*dim_str;
-    this->sta_counters_table = new unsigned int[M*K*4]; //yujin: mapping table에서 1이 있는 위치에 순서대로 multiplier를 할당하는 table
-    this->str_counters_table = new unsigned int[M*K*4];
+    this->multiplier_dest_table = new unsigned int[M*K*N]; //yujin: mapping table에서 1이 있는 위치에 순서대로 multiplier를 할당하는 table
+    this->str_counters_table = new unsigned int[M*K*N];
 }
 
 
@@ -225,7 +227,7 @@ void SparseSDMemory::setLayer(DNNLayer* dnn_layer, address_t MK_address, address
 
 
     this->output_size = dim_sta*dim_str;
-    this->sta_counters_table = new unsigned int[dim_sta*K];
+    this->multiplier_dest_table = new unsigned int[dim_sta*K];
     this->str_counters_table = new unsigned int[dim_str*K];
 
 
@@ -269,7 +271,7 @@ void SparseSDMemory::cycle() {
 
     this->local_cycle+=1;
     this->sdmemoryStats.total_cycles++; //To track information
-    std :: cout <<"[STA_CURRENT_INDEX_METADATA] START mapping_table column index = " <<sta_current_index_metadata << std::endl;
+    std :: cout <<"[START mapping_table column index] = " << start_column_index << std::endl;
 
 
     //data_t prev_weight;
@@ -277,20 +279,19 @@ void SparseSDMemory::cycle() {
 
     if(current_state==CONFIGURING) {   //If the architecture has not been configured
         std::cout << "[CURRENT_STATE = CONFIGURING] start count VN size & set Network" << std::endl;
-        int i = sta_current_index_metadata;  //metadata의 column index
+        int i = start_column_index;  //start mapping_table column index
 
-        //int row_index=0;  //yujin: row index
         int n_ms = 0; //yujin: Number of multipliers assigned
         int n_current_cluster = 0; //yujin: 1개의 column에서의 1의 개수 count-> sparseVN -> (나중에 adder tree에 VN size 전달)
         this->configurationVNs.clear();
         this->vnat_table.clear();
 
         /*
-	    if(this->sta_current_j_metadata > 0)  { // We are managing one cluster with folding
-            std::cout<< "[STA_CURRENT_J_METADATA > 0] we are managing one cluster with folding"<<std::endl;
+	    if(this->current_row_index > 0)  { // We are managing one cluster with folding
+            std::cout<< "[current_row_index > 0] we are managing one cluster with folding"<<std::endl;
             n_ms++; //One for the psum
-	        //row_index=this->sta_current_j_metadata; //yujin: 중간에 끊긴 경우(= multiplier의 num < 1개의 column안에서 row index) 다음 row index부터 시작
-	         while((n_ms < this->num_ms) && (sta_current_j_metadata*M*K+i < M*K*4)&&(i<M*K)) { //yujin: R = mapping table의 row 수
+	        //row_index=this->current_row_index; //yujin: 중간에 끊긴 경우(= multiplier의 num < 1개의 column안에서 row index) 다음 row index부터 시작
+	         while((n_ms < this->num_ms) && (current_row_index*M*K+i < M*K*4)&&(i<M*K)) { //yujin: R = mapping table의 row 수
                 //TODO change MK if it is another dw
                 //TODO YUJUIN : break if diff weight
 
@@ -299,16 +300,16 @@ void SparseSDMemory::cycle() {
 
                    // break;
                 //}
-                if(this->mapping_table[sta_current_j_metadata * M*K + i]) { //yujin: STA_metadat는 mappind table에서 하나의 column을 의미
+                if(this->mapping_table[current_row_index * M*K + i]) { //yujin: STA_metadat는 mappind table에서 하나의 column을 의미
                     //yujin: i=current column index
                     //Add to the cluster
-                    this->sta_counters_table[sta_current_j_metadata * M*K + i]=n_ms; //DEST
-                    std::cout<<"[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] "<<"mapping_table index = "<<sta_current_j_metadata * M*K+ i<< "multiplier destination"<< n_ms<<std::endl;
+                    this->multiplier_dest_table[current_row_index * M*K + i]=n_ms; //DEST
+                    std::cout<<"[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] "<<"mapping_table index = "<<current_row_index * M*K+ i<< "multiplier destination"<< n_ms<<std::endl;
                     //yujin: 1이면, multiplier 할당
                     n_ms++; //yujin: 사용한 multiplier의 수 count
                     n_current_cluster++; 
                 }
-                sta_current_j_metadata++; //yujin: 다음 row로 이동
+                current_row_index++; //yujin: 다음 row로 이동
 	        }
 
         SparseVN VN(n_current_cluster, true); //Here folding is enabled and the SparseVN increments 1 to size
@@ -316,28 +317,27 @@ void SparseSDMemory::cycle() {
         this->configurationVNs.push_back(VN); //yujin: configurationVNs = A set of each VN size mapped onto the architecture
 	    this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
 
-	    //Searching if there are more values in the next cluster. If not, update sta_last_j_metadata to K to indicate that in the next iteration the next sta dim must be evaluated
+	    //Searching if there are more values in the next cluster. If not, update last_row_next_start_index to K to indicate that in the next iteration the next sta dim must be evaluated
 	    int remaining_values = 0; //yujin: VN을 만들어 준 다음 row index부터 마지막 row index까지 1이 남아있는지 확인
-	    for(int r=sta_current_j_metadata; r<R; r++) {
+	    for(int r=current_row_index; r<R; r++) {
                 if(this->mapping_table[r * M*K + i]) {
                     remaining_values+=1;
 	        }
 	    }
 	    if(remaining_values > 0) { //yujin: remaining_values가 있으면, j부터 k까지 다시 count해서 SparseVN을 만들어주어야 한다
-	        this->sta_last_j_metadata=sta_current_j_metadata;
-            //yujin: sta_last_j_metadata = SparseVN을 만들어 준 다음 row의 index = 다음에 시작할 row index
+	        this->last_row_next_start_index=current_row_index;
+            //yujin: last_row_next_start_index = SparseVN을 만들어 준 다음 row의 index = 다음에 시작할 row index
 	    }
 
 	    else {
-                this->sta_last_j_metadata = R;
+                this->last_row_next_start_index = R;
 	    }
 	}
     */
 
-        //else { //yujin: folding이 아닌경우 = row index 0부터 시작하는 경우 (sta_current_j_metadata = 0)
-        while ((n_ms < this->num_ms) && (sta_current_j_metadata * M * K + i < M * K * 4) &&
-               (i < M * K)) { //TODO change MK if it is another dw
-            //yujin: i<R 조건 추가
+        //else { //yujin: folding이 아닌경우 = row index 0부터 시작하는 경우 (current_row_index = 0)
+        while ((n_ms < this->num_ms) && (current_row_index * M * K + i < M * K * N) &&(i < M * K)) { //TODO change MK if it is another dw
+            //yujin: i<M*K 조건 추가
             //TODO YUJUIN : break if diff weight
             //std::cout<<"[PREV_WEIGHT] prev_weight = "<< prev_weight << " cur_weight"<<cur_weight<< std::endl;
             //if(prev_weight != cur_weight) {
@@ -345,25 +345,25 @@ void SparseSDMemory::cycle() {
             // break;
             //}
 
-            if (this->mapping_table[sta_current_j_metadata * M * K +
-                                    i]) { //If the bit is enabled in the stationary bitmap
+            if (this->mapping_table[current_row_index * M * K +i]) { //If the bit is enabled in the stationary bitmap
                 //Add to the cluster
-                this->sta_counters_table[sta_current_j_metadata * M * K + i] = n_ms; //DEST
-                std::cout << "[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] " << "mapping_table index = "
-                          << sta_current_j_metadata * M * K + i << "multiplier destination" << n_ms << std::endl;
+                this->multiplier_dest_table[current_row_index * M * K + i] = n_ms; //DEST
+                std::cout << "[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] " << " mapping_table index = " << current_row_index * M * K + i << " multiplier destination" << n_ms << std::endl;
                 n_ms++;
                 n_current_cluster++;
 
             }
 
+            std::cout << "current row index = " << current_row_index << std::endl;
+            current_row_index++; // Next elem in vector (end next row index)
+            std::cout << "next row index = " << current_row_index << std::endl;
 
-            sta_current_j_metadata++; // Next elem in vector
-            std::cout << "row index = " << sta_current_j_metadata << std::endl;
-            if (sta_current_j_metadata == R) { //yujin: row index = R인 경우에만 SparseVN을 만들어주고 있음
+            if (current_row_index == R) { //yujin: row index = R인 경우에 SparseVN을 만들어주고 있음
                 //Change cluster since we change of vector
-                sta_current_j_metadata = 0; //elem = 0
-                i++; // Next vector
-                std::cout << "row index , i = " << i << std::endl;
+                current_row_index = 0; //row index = 0
+                i++; // Next column
+                std::cout << "[CHECK ROW INDEX & COLUMN INDEX] " << " mapping_table column index =" << i << " row index"
+                          << current_row_index << std::endl;
 
                 if (n_current_cluster > 0) {
                     //Creating the cluster for this row
@@ -375,7 +375,10 @@ void SparseSDMemory::cycle() {
             }
         }
 
-        if (sta_current_j_metadata < R) {
+        //prev_sta_last_j_metadata = this->last_row_next_start_index;
+        prev_sta_last_j_metadata = this->last_row_next_start_index;
+        std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
+        if (current_row_index < R) {
             //Find if there is a last cluster
             if (n_current_cluster > 0) {
                 //Creating the cluster for this row
@@ -386,15 +389,15 @@ void SparseSDMemory::cycle() {
             }
 
             int remaining_values = 0;
-            for (int r = sta_current_j_metadata; r < R; r++) {
-                if (this->mapping_table[sta_current_j_metadata * M * K + i]) {
+            for (int r = current_row_index; r < R; r++) {
+                if (this->mapping_table[r * M * K + i]) {
                     remaining_values += 1;
                 }
             }
             if (remaining_values > 0) {
-                this->sta_last_j_metadata = sta_current_j_metadata + 1;
+                this->last_row_next_start_index = current_row_index; // yujin: if is value, start from next value
             } else {
-                this->sta_last_j_metadata = R;
+                this->last_row_next_start_index = R;
             }
         }
 
@@ -404,19 +407,19 @@ void SparseSDMemory::cycle() {
                 SparseVN VN(n_current_cluster, false); //Here folding is still disabled as this is the first iteration
                 this->configurationVNs.push_back(VN);
                 this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
-                       //Searching if there are more values in the next cluster. If not, update sta_last_j_metadata to K to indicate that in the next iteration the next sta dim must be evaluated
+                       //Searching if there are more values in the next cluster. If not, update last_row_next_start_index to K to indicate that in the next iteration the next sta dim must be evaluated
                 int remaining_values = 0;
-                for(int r=sta_current_j_metadata; r<R; r++) {
-                    if(this->mapping_table[sta_current_j_metadata * M*K + i]) {
+                for(int r=current_row_index; r<R; r++) {
+                    if(this->mapping_table[current_row_index * M*K + i]) {
                         remaining_values+=1;
                     }
                 }
                 if(remaining_values > 0) {
-                    this->sta_last_j_metadata=sta_current_j_metadata;
+                    this->last_row_next_start_index=current_row_index;
                 }
 
                  else {
-                    this->sta_last_j_metadata = R;
+                    this->last_row_next_start_index = R;
                 }
             }
             */
@@ -424,18 +427,23 @@ void SparseSDMemory::cycle() {
         else { //If there is at least one cluster, then all of them has size K and it is necessary to stream K
             //K elements
             int remaining_values = 0;
-            for (int r = sta_current_j_metadata; r < R; r++) {
-                if (this->mapping_table[sta_current_j_metadata * M * K + i]) {
+            for (int r = current_row_index; r < R; r++) {
+                if (this->mapping_table[r * M * K + i]) {
                     remaining_values += 1;
                 }
             }
             if (remaining_values > 0) {
-                this->sta_last_j_metadata = sta_current_j_metadata + 1;
-            } else {
-                this->sta_last_j_metadata = R;
+                this->last_row_next_start_index = current_row_index;
+            }
+            else {
+                this->last_row_next_start_index = R;
             }
         }
-        count_column_index = i;
+
+        count_column_index = i; // save end mapping_table column index
+        std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << " end row_index" << last_row_next_start_index-1 <<std::endl;
+        std::cout << "[CHECK END VN COLUMN_INDEX] VN end column index" << count_column_index <<std::endl;
+
         // } //end else whole rows
 
 
@@ -444,7 +452,7 @@ void SparseSDMemory::cycle() {
         //Once the VNs has been selected, lets configure the RN and MN
         // Configuring the multiplier network
         if (this->configurationVNs.size() == 0) { //yujin: configurationVNs에 아무것도 들어 있지 않은 경우
-            std::cout << "Cluster size exceeds the number of multipliers in column " << this->sta_current_index_metadata << std::endl;
+            std::cout << "Cluster size exceeds the number of multipliers in column " << this->start_column_index << std::endl;
             assert(false);
         }
         for (int i = 0; i < this->configurationVNs.size(); i++) {
@@ -454,6 +462,7 @@ void SparseSDMemory::cycle() {
         if (this->configurationVNs.size() > this->sdmemoryStats.n_sta_vectors_at_once_max) {
             this->sdmemoryStats.n_sta_vectors_at_once_max = this->configurationVNs.size();
         }
+
         this->sdmemoryStats.n_reconfigurations++;
 
         std::cout << "Configuring the MULTIPLIER & REDUCTION Networks" << std::endl;
@@ -470,10 +479,10 @@ void SparseSDMemory::cycle() {
 
 
     else if(current_state == DIST_STA_MATRIX) {
-        int address_offrset = sta_current_index_metadata;
+        int address_offrset = start_column_index;
         //Distribution of the stationary matrix
         std::cout<< "[DIST_STA_MATRIX] Make weight destination & data"<<std::endl;
-        //std::cout<<"[sta_current_index_metadata]"<<sta_current_index_metadata<<std::endl;
+        //std::cout<<"[start_column_index]"<<start_column_index<<std::endl;
         unsigned int dest = 0; //MS destination
         //unsigned int sub_address = 0;
     
@@ -507,11 +516,11 @@ void SparseSDMemory::cycle() {
 
 /*
     else if(current_state == DIST_STR_MATRIX) {
-        std::cout<< "DIST_STR_MATRIX"<<sta_current_index_metadata<<std::endl;
+        std::cout<< "DIST_STR_MATRIX"<<start_column_index<<std::endl;
         int address_offset;
         //yujin: make input index (use data)
-        if(this->sta_current_j_metadata > 0)  {
-            for (int i = sta_current_j_metadata; i <= sta_current_index_metadata + this->configurationVNs.size(); i++) {
+        if(this->current_row_index > 0)  {
+            for (int i = current_row_index; i <= start_column_index + this->configurationVNs.size(); i++) {
                 for (int j = 0 ; j < this->R; j++) {
                     if (mapping_table[j * M*K + i] && (j < this->configurationVNs.size())) {
                         str_counters_table[j * M*K + i] = STA_address[address_offset];
@@ -522,7 +531,7 @@ void SparseSDMemory::cycle() {
         }
 
         else {
-            for (int i = sta_current_index_metadata; i <= sta_current_index_metadata + this->configurationVNs.size(); i++) {
+            for (int i = start_column_index; i <= start_column_index + this->configurationVNs.size(); i++) {
                 for (int j = 0; j < this->R; j++) {
                     if (mapping_table[j * M*K + i] ) {
                         str_counters_table[j * M * K + i] = j;
@@ -534,22 +543,22 @@ void SparseSDMemory::cycle() {
 */
 
     else if(current_state == DIST_STR_MATRIX) {
-        std::cout << "DIST_STR_MATRIX" << sta_current_index_metadata << std::endl;
+        std::cout << "DIST_STR_MATRIX" << start_column_index << std::endl;
         std::cout << "last_count_column_index" << last_count_column_index << std::endl;
         std::cout << "column index" << count_column_index << std::endl;
         //yujin: make input index (use data)
-        std::cout << "sta_current_j_metadata" << sta_current_j_metadata << std::endl;
+        std::cout << "current_row_index" << current_row_index << std::endl;
 
         /*
-        if(this->sta_current_j_metadata > 0)  {
+        if(this->current_row_index > 0)  {
             int prev_last_count_column_index = last_count_column_index;
             int row_size = this->R;
-            std::cout<<"sta_last_j_metadata"<<this->sta_last_j_metadata<<std::endl;
+            std::cout<<"last_row_next_start_index"<<this->last_row_next_start_index<<std::endl;
             for (int i = last_count_column_index; i <= count_column_index; i++) {
                 if(i==M*K)
                     break;
                 if(i==count_column_index){
-                    row_size = this->sta_last_j_metadata;
+                    row_size = this->last_row_next_start_index;
                 }
                 for (int j = 0 ; j < row_size; j++) {
                     if (mapping_table[j * M*K + i]) {
@@ -567,33 +576,45 @@ void SparseSDMemory::cycle() {
         int prev_last_count_column_index = last_count_column_index;
         int row_size = this->R;
 
-        std::cout << "sta_last_j_metadata" << this->sta_last_j_metadata << std::endl;
         for (int i = last_count_column_index; i <= this->count_column_index; i++) {
             if (i == M * K)
                 break;
-            if (i == count_column_index) {
-                row_size = this->sta_last_j_metadata;
+            if(prev_sta_last_j_metadata==R){
+                prev_sta_last_j_metadata = 0;
             }
-            for (int j = 0; j < row_size; j++) {
+            if (i == count_column_index) {
+                row_size = this->last_row_next_start_index; // last 1 idx
+            }
+            // start = prev_last , end = current last
+            int last_j = prev_sta_last_j_metadata;
+            for (int j = prev_sta_last_j_metadata; j < row_size; j++) {
                 if (mapping_table[j * M * K + i]) {
                     str_counters_table[j * M * K + i] = j;
                     std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
                 }
+                last_j = j + 1;
+
             }
-            prev_last_count_column_index = i + 1;
+            if(last_j==R) {
+                prev_last_count_column_index = i + 1;
+                prev_sta_last_j_metadata = 0;
+            }
+
         }
+        std::cout << "prev_sta_last_j_metadata" << prev_sta_last_j_metadata << std::endl;
+        std::cout << "last_row_next_start_index" << this->last_row_next_start_index << std::endl;
         last_count_column_index = prev_last_count_column_index;
         //}
 
-        int init_point_str = this->sta_current_index_metadata;
+        int init_point_str = this->start_column_index;
         //std::cout<< "init_point_str" << init_point_str<<std::endl;
-        int end_point_str = sta_current_index_metadata + this->configurationVNs.size();
+        int end_point_str = start_column_index + this->configurationVNs.size();
         //std::cout<< "end_point_str" << end_point_str<<std::endl;
         /*
-        if (this->sta_current_j_metadata > 0) { //If folding is enabled there is just a row on  fly]
+        if (this->current_row_index > 0) { //If folding is enabled there is just a row on  fly]
             assert(this->configurationVNs.size() == 1);
             //send psum
-            unsigned int addr_offset = sta_current_index_metadata;
+            unsigned int addr_offset = start_column_index;
             bool *destinations = new bool[this->num_ms];
             for (int i = 0; i < this->num_ms; i++) {
                 destinations[i] = false;
@@ -617,7 +638,7 @@ void SparseSDMemory::cycle() {
 
             for (int i = 0; i < this->R; i++) {
                 if (mapping_table[i * M * K + j]) {
-                    unsigned int dest = sta_counters_table[i * M * K + j];
+                    unsigned int dest = multiplier_dest_table[i * M * K + j];
                     unsigned int src = str_counters_table[i * M * K + j];
                     data = STA_address[src];
                     std::cout << "data" << STA_address[src] << std::endl;
@@ -646,7 +667,7 @@ void SparseSDMemory::cycle() {
             //unsigned int vn = pck_received->get_vn();
             data_t data = pck_received->get_data();
             this->sdmemoryStats.n_SRAM_psum_writes++; //To track information
-	        unsigned int addr_offset = sta_current_index_metadata;//+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
+	        unsigned int addr_offset = start_column_index;//+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
 	        //vnat_table[vn]++;
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
             current_output++;
@@ -680,29 +701,29 @@ void SparseSDMemory::cycle() {
     
 	//this->str_current_index = 0;
 	this->sta_iter_completed=false;
-        if(this->configurationVNs.size()==1) {//If there is only one VN, then maybe foliding has been needed
-            this->sta_current_j_metadata=this->sta_last_j_metadata;
+        //if(this->configurationVNs.size()==1) {//If there is only one VN, then maybe foliding has been needed
+        this->current_row_index=this->last_row_next_start_index;
 	   // if(this->configurationVNs[0].getFolding()) {
-           //     this->sta_current_j_metadata-=1;
+           //     this->current_row_index-=1;
 	   // }
         // yujin : next column
-        // sta_current_j_metadata : current row
-        // sta_current_index_metadata : next column
+        // current_row_index : current row
+        // start_column_index : next column
         // count_column_index : current column
-	    if(this->sta_current_j_metadata == this->R) { //If this is the end of the cluster, it might start to the next
-            std::cout<< "sta current j metadata" <<sta_current_index_metadata<<"== R"<<std::endl;
+	    if(this->current_row_index == this->R) { //If this is the end of the cluster, it might start to the next
+            std::cout<< "start_column_index" <<start_column_index<<"== R"<<std::endl;
             std::cout<< "sta current j metadata ++" <<std::endl;
-                //this->sta_current_index_metadata+=1;
-            this->sta_current_index_metadata = count_column_index + 1;
-		this->sta_current_j_metadata = 0;
-		std::cout << "STONNE: VN complete num  (" << this->sta_current_index_metadata <<")" << std::endl;
+                //this->start_column_index+=1;
+            this->start_column_index = count_column_index + 1;
+		    this->current_row_index = 0;
+		    std::cout << "STONNE: VN complete num  (" << this->start_column_index <<")" << std::endl;
         }
-	}
+	//}
 
 	else { // yujin : remain column
-	    this->sta_current_index_metadata=(this->count_column_index); //yujin: error???
-	    std::cout << "STONNE: VN complete num (" << this->sta_current_index_metadata << ")" << std::endl;
-	    //this->sta_current_j_metadata = 0;
+	    this->start_column_index=(this->count_column_index); //yujin: error???
+	    std::cout << "STONNE: VN complete num (" << this->start_column_index << ")" << std::endl;
+	    //this->current_row_index = 0;
 	}
 	unsigned int total_size = 0;
         for(int i=0; i<this->configurationVNs.size(); i++) {
@@ -712,7 +733,7 @@ void SparseSDMemory::cycle() {
 	    }
     }
 	this->sta_current_index_matrix+=total_size;
-	if(sta_current_index_metadata>=M*K-1) { //yujin: this->configurationVNs.size() -> M*K*4
+	if(start_column_index>=M*K-1) { //yujin: this->configurationVNs.size() -> M*K*4
 	    //Calculating sparsity values  and some final stats
 	    //unsigned int sta_metadata_size = this->dim_sta*K;
 	    //unsigned int str_metadata_size = this->dim_str*K;
