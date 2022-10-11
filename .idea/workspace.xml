@@ -12,8 +12,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="complete current_state = CONFIGURING">
+    <list default="true" id="3b96b7f2-c522-4aa4-afc9-e81137b20489" name="Changes" comment="complete current_state = DIST_STR_MATRIX">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/objs/SparseSDMemory.o" beforeDir="false" afterPath="$PROJECT_DIR$/objs/SparseSDMemory.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SparseSDMemory.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/SparseSDMemory.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -186,7 +187,7 @@
       <workItem from="1665108714608" duration="2892000" />
       <workItem from="1665115180408" duration="18557000" />
       <workItem from="1665448811379" duration="7415000" />
-      <workItem from="1665465060364" duration="2008000" />
+      <workItem from="1665465060364" duration="7686000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1663678900555</created>
@@ -272,7 +273,21 @@
       <option name="project" value="LOCAL" />
       <updated>1665465897597</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="complete current_state = DIST_STR_MATRIX">
+      <created>1665467384986</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1665467384986</updated>
+    </task>
+    <task id="LOCAL-00014" summary="complete current_state = DIST_STR_MATRIX">
+      <created>1665467427315</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1665467427315</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -321,7 +336,8 @@
     <MESSAGE value="make WEIGHT DataPackage (before edit DIST_STR_MATRIX)" />
     <MESSAGE value="make PSUM address (before edit DIST_STR_MATRIX : init_point_str~)" />
     <MESSAGE value="complete current_state = CONFIGURING" />
-    <option name="LAST_COMMIT_MESSAGE" value="complete current_state = CONFIGURING" />
+    <MESSAGE value="complete current_state = DIST_STR_MATRIX" />
+    <option name="LAST_COMMIT_MESSAGE" value="complete current_state = DIST_STR_MATRIX" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -350,87 +366,87 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>912</line>
+          <line>943</line>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>630</line>
+          <line>646</line>
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>631</line>
+          <line>647</line>
           <option name="timeStamp" value="152" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>619</line>
+          <line>635</line>
           <option name="timeStamp" value="154" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>662</line>
+          <line>690</line>
           <option name="timeStamp" value="159" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>908</line>
+          <line>939</line>
           <option name="timeStamp" value="160" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>909</line>
+          <line>940</line>
           <option name="timeStamp" value="161" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>915</line>
+          <line>946</line>
           <option name="timeStamp" value="162" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>924</line>
+          <line>955</line>
           <option name="timeStamp" value="164" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>926</line>
+          <line>957</line>
           <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>664</line>
+          <line>693</line>
           <option name="timeStamp" value="166" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>667</line>
+          <line>696</line>
           <option name="timeStamp" value="167" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>677</line>
+          <line>708</line>
           <option name="timeStamp" value="168" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>864</line>
+          <line>895</line>
           <option name="timeStamp" value="176" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>855</line>
+          <line>886</line>
           <option name="timeStamp" value="177" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>856</line>
+          <line>887</line>
           <option name="timeStamp" value="178" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>857</line>
+          <line>888</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -585,7 +601,7 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>678</line>
+          <line>709</line>
           <option name="timeStamp" value="245" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -610,17 +626,17 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>902</line>
+          <line>933</line>
           <option name="timeStamp" value="264" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>888</line>
+          <line>919</line>
           <option name="timeStamp" value="270" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>877</line>
+          <line>908</line>
           <option name="timeStamp" value="271" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -630,42 +646,42 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>884</line>
+          <line>915</line>
           <option name="timeStamp" value="277" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>881</line>
+          <line>912</line>
           <option name="timeStamp" value="279" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>536</line>
+          <line>537</line>
           <option name="timeStamp" value="285" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>755</line>
+          <line>786</line>
           <option name="timeStamp" value="288" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>869</line>
+          <line>900</line>
           <option name="timeStamp" value="290" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>897</line>
+          <line>928</line>
           <option name="timeStamp" value="294" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>538</line>
+          <line>539</line>
           <option name="timeStamp" value="296" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>533</line>
+          <line>534</line>
           <option name="timeStamp" value="297" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -685,7 +701,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>706</line>
+          <line>737</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -695,18 +711,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>641</line>
-          <option name="timeStamp" value="396" />
+          <line>701</line>
+          <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>611</line>
-          <option name="timeStamp" value="397" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/src/SparseSDMemory.cpp</url>
-          <line>637</line>
-          <option name="timeStamp" value="401" />
+          <line>545</line>
+          <option name="timeStamp" value="414" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

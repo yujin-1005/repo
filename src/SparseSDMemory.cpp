@@ -377,6 +377,7 @@ void SparseSDMemory::cycle() {
 
         //prev_sta_last_j_metadata = this->last_row_next_start_index;
         prev_sta_last_j_metadata = this->last_row_next_start_index;
+
         std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
         if (current_row_index < R) {
             //Find if there is a last cluster
@@ -441,7 +442,7 @@ void SparseSDMemory::cycle() {
         }
 
         count_column_index = i; // save end mapping_table column index
-        std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << " end row_index" << last_row_next_start_index-1 <<std::endl;
+        std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << last_row_next_start_index-1 <<std::endl;
         std::cout << "[CHECK END VN COLUMN_INDEX] VN end column index" << count_column_index <<std::endl;
 
         // } //end else whole rows
@@ -545,10 +546,8 @@ void SparseSDMemory::cycle() {
     else if(current_state == DIST_STR_MATRIX) {
         std::cout<< "[DIST_STA_MATRIX] Make input destination & data"<<std::endl;
 
-        std::cout << "DIST_STR_MATRIX : " << last_count_column_index << std::endl;
         std::cout << "last_count_column_index : " << last_count_column_index <<std::endl;
         std::cout << "column index : " << count_column_index << std::endl;
-
         //yujin: make input index (use data)
 
         std::cout << "current_row_index : " << current_row_index << std::endl;
@@ -581,23 +580,37 @@ void SparseSDMemory::cycle() {
         int row_size = this->R;
 
         for (int i = last_count_column_index; i <= this->count_column_index; i++) {
+            data_t data;
             if (i == M * K)
                 break;
             if(prev_sta_last_j_metadata==R){
-                prev_sta_last_j_metadata = 0;
+                prev_sta_last_j_metadata = 0; //row_index
             }
             if (i == count_column_index) {
                 row_size = this->last_row_next_start_index; // last 1 idx
             }
+
             // start = prev_last , end = current last
             int last_j = prev_sta_last_j_metadata;
             for (int j = prev_sta_last_j_metadata; j < row_size; j++) {
                 if (mapping_table[j * M * K + i]) {
                     str_counters_table[j * M * K + i] = j;
                     std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
+
+                    unsigned int dest = multiplier_dest_table[j * M * K + i];
+                    unsigned int src = str_counters_table[j * M * K + i];
+                    data = STA_address[src];
+                    std::cout << "data" << STA_address[src] << std::endl;
+                    sdmemoryStats.n_SRAM_input_reads++;
+
+                    DataPackage *pck = new DataPackage(sizeof(data_t), data, IACTIVATION, 0, UNICAST, dest); //+yujin: save row index -> use output address index
+                    this->sendPackageToInputFifos(pck);
+
+                }
+                else {
+                    data = 0.0; //If the STA matrix has a value then the STR matrix must be sent even
                 }
                 last_j = j + 1;
-
             }
             if(last_j==R) {
                 prev_last_count_column_index = i + 1;
@@ -610,10 +623,12 @@ void SparseSDMemory::cycle() {
         last_count_column_index = prev_last_count_column_index;
         //}
 
-        int init_point_str = this->start_column_index;
+
+        //int init_point_str = this->start_column_index;
         //std::cout<< "init_point_str" << init_point_str<<std::endl;
-        int end_point_str = start_column_index + this->configurationVNs.size();
+         //int end_point_str = this->count_column_index;
         //std::cout<< "end_point_str" << end_point_str<<std::endl;
+
         /*
         if (this->current_row_index > 0) { //If folding is enabled there is just a row on  fly]
             assert(this->configurationVNs.size() == 1);
@@ -636,32 +651,45 @@ void SparseSDMemory::cycle() {
             this->sendPackageToInputFifos(pck);
         }
         */
-        for (int j = init_point_str; j < end_point_str; j++) {   //For each element in the current vector in the str matrix
+        /*
+        for (int i = init_point_str; i <= end_point_str; i++) {   //For each element in the current vector in the str matrix
             //Creating the bit vector for this value
             data_t data;
+            if (i == M * K)
+                break;
+            if(prev_sta_last_j_metadata==R){
+                prev_sta_last_j_metadata = 0; //row_index
+            }
+            if (i == count_column_index) {
+                row_size = this->last_row_next_start_index; // last 1 idx
+            }
 
-            for (int i = 0; i < this->R; i++) {
-                if (mapping_table[i * M * K + j]) {
-                    unsigned int dest = multiplier_dest_table[i * M * K + j];
-                    unsigned int src = str_counters_table[i * M * K + j];
+            for (int j = 0; j < this->R; j++) {
+                if (mapping_table[j * M * K + i]) {
+                    unsigned int dest = multiplier_dest_table[j * M * K + i];
+                    unsigned int src = str_counters_table[j * M * K + i];
                     data = STA_address[src];
                     std::cout << "data" << STA_address[src] << std::endl;
                     sdmemoryStats.n_SRAM_input_reads++;
 
-                    DataPackage *pck = new DataPackage(sizeof(data_t), data, IACTIVATION, 0, UNICAST, dest);
+                    DataPackage *pck = new DataPackage(sizeof(data_t), data, IACTIVATION, 0, UNICAST, dest); //+yujin: save row index -> use output address index
                     this->sendPackageToInputFifos(pck);
                     //std::cout<<"sendPackageToInputFifos"<<std::endl;
-                } else {
+                }
+                else {
                     data = 0.0; //If the STA matrix has a value then the STR matrix must be sent even
                 }
             }
         }
+         */
         //str_current_index++;
     }
 
 
+
     //Receiving output data from write_connection
     this->receive();
+
 
     if(!write_fifo->isEmpty()) {
         std::cout<<"[WRITE_FIFO] pop write_fifo -> write output_address (psum or ofmap)"<<std::endl;
@@ -672,6 +700,8 @@ void SparseSDMemory::cycle() {
             data_t data = pck_received->get_data();
             this->sdmemoryStats.n_SRAM_psum_writes++; //To track information
 	        unsigned int addr_offset = start_column_index;//+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
+            // yujin: edit start_column_index -> input pck row_index
+
 	        //vnat_table[vn]++;
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
             current_output++;
