@@ -765,7 +765,8 @@ void SparseSDMemory::cycle() {
 	        }
         }
 	    this->sta_current_index_matrix+=total_size;
-	    if((start_column_index>=M*K-1)&&(last_row_next_start_index==0)) { //yujin: this->configurationVNs.size() -> M*K*4
+	    if((start_column_index>M*K-1)) { //yujin: last_row_next_start_index error!
+            //yujin: this->configurationVNs.size() -> M*K*4
 	        //Calculating sparsity values  and some final stats
 	        //unsigned int sta_metadata_size = this->dim_sta*K;
 	        //unsigned int str_metadata_size = this->dim_str*K;
