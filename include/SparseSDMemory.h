@@ -54,8 +54,7 @@ private:
     unsigned int write_buffer_capacity;
     unsigned int port_width;
     //yujin: add
-    unsigned int prev_weight;
-    unsigned int cur_weight;
+
     unsigned int count_column_index;
     //unsigned int count_row_index;
     unsigned int last_count_column_index_weight;
@@ -64,6 +63,8 @@ private:
     unsigned int end_point_str;
     int prev_sta_last_j_metadata;
     int prev_sta_last_j_metadata_weight;
+    data_t prev_weight;
+    data_t cur_weight;
     // add end
 
     unsigned int ms_size_per_input_port;
