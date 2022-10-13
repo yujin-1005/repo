@@ -54,8 +54,10 @@ SparseSDMemory::SparseSDMemory(id_t id, std::string name, Config stonne_cfg, Con
     this->n_ones_sta_matrix=0;
     this->n_ones_str_matrix=0;
     this->last_count_column_index=0;
+    this->last_count_column_index_weight = 0;
 
     this->prev_sta_last_j_metadata =0;
+    this->prev_sta_last_j_metadata_weight =0;
 }
 
 SparseSDMemory::~SparseSDMemory() {
@@ -377,6 +379,8 @@ void SparseSDMemory::cycle() {
 
         //prev_sta_last_j_metadata = this->last_row_next_start_index;
         prev_sta_last_j_metadata = this->last_row_next_start_index;
+        prev_sta_last_j_metadata_weight = this->last_row_next_start_index;
+
 
         std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
         if (current_row_index < R) {
@@ -440,8 +444,8 @@ void SparseSDMemory::cycle() {
                 this->last_row_next_start_index = R;
             }
         }
-
         count_column_index = i; // save end mapping_table column index
+
         std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << last_row_next_start_index-1 <<std::endl;
         std::cout << "[CHECK END VN COLUMN_INDEX] VN end column index" << count_column_index <<std::endl;
 
@@ -480,39 +484,57 @@ void SparseSDMemory::cycle() {
 
 
     else if(current_state == DIST_STA_MATRIX) {
-        int address_offrset = start_column_index;
+        //int address_offset = start_column_index;
         //Distribution of the stationary matrix
         std::cout<< "[DIST_STA_MATRIX] Make weight destination & data"<<std::endl;
         //std::cout<<"[start_column_index]"<<start_column_index<<std::endl;
         unsigned int dest = 0; //MS destination
+        int row_size = this->R;
         //unsigned int sub_address = 0;
-    
-        for(int i=0; i<this->configurationVNs.size(); i++) {
+        int prev_last_count_column_index_weight = last_count_column_index_weight;
+
+        for(int i=last_count_column_index_weight; i<=this->count_column_index; i++) {
+            if (i == M * K)
+                break;
+            if(prev_sta_last_j_metadata_weight==R){
+                prev_sta_last_j_metadata_weight = 0; //row_index
+            }
+            if (i == count_column_index) {
+                row_size = this->last_row_next_start_index; // last 1 idx
+            }
             /*
 	        if(this->configurationVNs[i].getFolding()) {
              j=1;
 	        dest++; //Avoid the one in charge of the psum
 	        }
             */
-            //std::cout<<"[address_offrset]"<<address_offrset<<std::endl;
-            for(int j = 0; j<this->configurationVNs[i].get_VN_Size(); j++) {
+            //std::cout<<"[address_offset]"<<address_offset<<std::endl;
+            int last_j = prev_sta_last_j_metadata_weight;
+            for(int j = prev_sta_last_j_metadata_weight; j<row_size; j++) {
 	            //Accessing to memory
-	            //data_t data = this->STR_address[i]; //yujin error!: weight address =  weight value
-                data_t data = this->STR_address[address_offrset];
-                //prev_weight =data;
-                //std::cout<< "[PREV_WEIGHT] prev_weight value is : "<<prev_weight <<std::endl;
+                if (mapping_table[j * M * K + i]) {
+                    data_t data = this->STR_address[i]; //yujin: WEIGHT_MATRIX[column index]
+                    //prev_weight =data;
+                    //std::cout<< "[PREV_WEIGHT] prev_weight value is : "<<prev_weight <<std::endl;
 
-	            sdmemoryStats.n_SRAM_weight_reads++;
-	            this->n_ones_sta_matrix++;
+                    sdmemoryStats.n_SRAM_weight_reads++;
+                    this->n_ones_sta_matrix++;
 
-	            DataPackage* pck_to_send = new DataPackage(sizeof(data_t), data, WEIGHT, 0, UNICAST, dest);
-                //std::cout<<"dest, data = " << dest <<data<<std::endl;
-	            this->sendPackageToInputFifos(pck_to_send);
-                dest++;
-                //sub_address++;
+                    DataPackage *pck_to_send = new DataPackage(sizeof(data_t), data, WEIGHT, 0, UNICAST, dest);
+                    //std::cout<<"dest, data = " << dest <<data<<std::endl;
+                    this->sendPackageToInputFifos(pck_to_send);
+                    dest++;
+                    //sub_address++;
+                }
+                last_j = j + 1;
 	        }
-            address_offrset++;
+            if(last_j==R) {
+                prev_last_count_column_index_weight = i + 1;
+                prev_sta_last_j_metadata_weight = 0;
+            }
+            //address_offset++;
         }
+        last_count_column_index_weight = prev_last_count_column_index_weight;
     }
 
 /*
@@ -765,7 +787,7 @@ void SparseSDMemory::cycle() {
 	        }
         }
 	    this->sta_current_index_matrix+=total_size;
-	    if((start_column_index>M*K-1)) { //yujin: last_row_next_start_index error!
+	    if((start_column_index>M*K-1)) {
             //yujin: this->configurationVNs.size() -> M*K*4
 	        //Calculating sparsity values  and some final stats
 	        //unsigned int sta_metadata_size = this->dim_sta*K;
