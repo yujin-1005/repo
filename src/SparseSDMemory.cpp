@@ -721,7 +721,7 @@ void SparseSDMemory::cycle() {
             data_t data = pck_received->get_data();
             this->sdmemoryStats.n_SRAM_psum_writes++; //To track information
 	        unsigned int addr_offset = start_column_index;//+vn)*OUT_DIST_VN + vnat_table[vn]*OUT_DIST_VN_ITERATION;
-            // yujin: edit start_column_index -> input pck row_index
+            // yujin: error! : edit start_column_index -> input pck row_index
 
 	        //vnat_table[vn]++;
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
