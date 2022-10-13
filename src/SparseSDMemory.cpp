@@ -58,8 +58,6 @@ SparseSDMemory::SparseSDMemory(id_t id, std::string name, Config stonne_cfg, Con
 
     this->prev_sta_last_j_metadata =0;
     this->prev_sta_last_j_metadata_weight =0;
-    this->prev_weight = 0;
-    this->cur_weight = 0;
 }
 
 SparseSDMemory::~SparseSDMemory() {
@@ -340,7 +338,10 @@ void SparseSDMemory::cycle() {
         while ((n_ms < this->num_ms) && (current_row_index * M * K + i < M * K * N) &&(i < M * K)) { //TODO change MK if it is another dw
             //yujin: i<M*K 조건 추가
             //TODO YUJUIN : break if diff weight
-            std::cout<<"[PREV_WEIGHT] prev_weight = "<< prev_weight <<std::endl; //<< " cur_weight"<<cur_weight<< std::endl;
+            //if (STR_address[i] != STR_address[i+1])
+                //break;
+
+            //std::cout<<"[PREV_WEIGHT] prev_weight = "<< prev_weight <<std::endl; //<< " cur_weight"<<cur_weight<< std::endl;
             //if(prev_weight != cur_weight) {
 
             // break;
@@ -355,6 +356,7 @@ void SparseSDMemory::cycle() {
 
             }
 
+            prev_weight = STR_address[i];
             std::cout << "current row index = " << current_row_index << std::endl;
             current_row_index++; // Next elem in vector (end next row index)
             std::cout << "next row index = " << current_row_index << std::endl;
@@ -364,6 +366,7 @@ void SparseSDMemory::cycle() {
                 current_row_index = 0; //row index = 0
                 i++; // Next column
                 std::cout << "[CHECK ROW INDEX & COLUMN INDEX] " << " mapping_table column index =" << i << " row index"<< current_row_index << std::endl;
+                cur_weight = STR_address[i];
 
                 if (n_current_cluster > 0) {
                     //Creating the cluster for this row
@@ -372,6 +375,8 @@ void SparseSDMemory::cycle() {
                     this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
                     n_current_cluster = 0;
                 }
+                if(prev_weight != cur_weight)
+                    break;
             }
         }
 
@@ -512,7 +517,7 @@ void SparseSDMemory::cycle() {
 	            //Accessing to memory
                 if (mapping_table[j * M * K + i]) {
                     data_t data = this->STR_address[i]; //yujin: WEIGHT_MATRIX[column index]
-                    prev_weight =data;
+                    //prev_weight =data;
                     //std::cout<< "[PREV_WEIGHT] prev_weight value is : "<<prev_weight <<std::endl;
 
                     sdmemoryStats.n_SRAM_weight_reads++;
