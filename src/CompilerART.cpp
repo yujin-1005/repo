@@ -34,8 +34,8 @@ void CompilerART::configureSparseSignals(std::vector<SparseVN> sparseVNs, DNNLay
 
 
 void CompilerART::generate_art_enabling_links(unsigned int num_ms) {
-//Ultimo nivel recorrido aparte hasta el numero de ms
-// Los siguientes niveles son recorridos mirando abajo y mirando en la configuracion del nivel inferior. Si tiene hijo 
+    //Ultimo nivel recorrido aparte hasta el numero de ms
+    // Los siguientes niveles son recorridos mirando abajo y mirando en la configuracion del nivel inferior. Si tiene hijo
     std::cout << "Generating ART Enabling links signals" << std::endl;
     int nlevels = log10(num_ms) / log10(2); //All the levels without count the leaves (MSwitches)
     int ms_used = this->current_tile->get_Num_VNs()*this->current_tile->get_VN_Size();
@@ -436,8 +436,8 @@ void CompilerART::generate_art_signals(unsigned int num_ms) {
 
 //Sparse implementation
 void CompilerART::generate_art_enabling_links_sparse(unsigned int num_ms) {
-//Ultimo nivel recorrido aparte hasta el numero de ms
-// Los siguientes niveles son recorridos mirando abajo y mirando en la configuracion del nivel inferior. Si tiene hijo 
+    //Ultimo nivel recorrido aparte hasta el numero de ms
+    // Los siguientes niveles son recorridos mirando abajo y mirando en la configuracion del nivel inferior. Si tiene hijo
     std::cout << "Generating ART Enabling links signals" << std::endl;
     int nlevels = log10(num_ms) / log10(2); //All the levels without count the leaves (MSwitches)
     int ms_used = 0;
@@ -502,7 +502,7 @@ void CompilerART::generate_art_enabling_links_sparse(unsigned int num_ms) {
             }
                 
             //Evaluating if the right link is enabled
-               //the very same functionallity as we check with the left link
+            //the very same functionallity as we check with the left link
             if(switches_configuration.count(as_right_id) > 0) {
                  adderconfig_t cfg = switches_configuration[as_right_id]; //Getting the configuration
                  if((cfg == ADD_3_1) || (cfg == ADD_1_1_PLUS_FW_1_1) || (cfg == FW_2_2)) {
@@ -549,6 +549,7 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
    bool* vector_bits = new bool[num_ms];
    bool* parent_bits = new bool[num_ms]; //Vector bits with the parent result. 
    direction_t dir;
+
    for(int i=0; i<this->sparseVNs.size(); i++) { //For each neuron
         //Creating vector for this VN
         for(int j=0; j<num_ms; j++) {
@@ -559,13 +560,13 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
         for(int j=shift_this_vn; j<(shift_this_vn+this->sparseVNs[i].get_VN_Size()); j++) {
             vector_bits[j]=true; 
         }
-	shift_this_vn+=this->sparseVNs[i].get_VN_Size(); //Updating shift_this_vn
+	    shift_this_vn+=this->sparseVNs[i].get_VN_Size(); //Updating shift_this_vn
 
-	//std::cout << "Vector bits: ";
-	//for(int j=0; j<num_ms; j++) {
+	    //std::cout << "Vector bits: ";
+	    //for(int j=0; j<num_ms; j++) {
         //    std::cout << vector_bits[j];
         //}
-	//std::cout << std::endl;
+	    //std::cout << std::endl;
         //Iterating over the tree
         int num_adders = num_ms;
         
@@ -573,11 +574,11 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
             //Iteratinv over the number of adder of that level
             num_adders = num_adders / 2;
             for(int as=0; as < num_adders; as++) {
-               // std::cout << "Processing ASwitch " << l << ":" << as << std::endl;
-               // std::cout << "  Vector bits: " << std::endl;
-               // std::cout << "  ";
-               // for(int v=0; v<num_ms; v++) {
-               //     std::cout << vector_bits[v];
+                // std::cout << "Processing ASwitch " << l << ":" << as << std::endl;
+                // std::cout << "  Vector bits: " << std::endl;
+                // std::cout << "  ";
+                // for(int v=0; v<num_ms; v++) {
+                //     std::cout << vector_bits[v];
                 //}
                 //std::cout << std::endl;
                 int shift_this_as = as*2; //the first child of this as
@@ -588,14 +589,15 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                     if(vector_bits[shift_this_as] || vector_bits[shift_this_as+1]) {
                        parent_bits[as] = true; //Updating vector for the next iteration
                        std::pair<int,int> as_id (l,as);
+
                        if(switches_configuration.count(as_id) > 0) { //Checking if the adder as is in the map
+                           std::cout<< "switches_configuration is FW2_2"<<std::endl;
                            switches_configuration[as_id]=FW_2_2;  //FW 2_2 because the adder is already in the list
                        }
-
                        else {
+                           std::cout<< "switches_configuration is FW2_2"<<std::endl;
                            switches_configuration[as_id]=ADD_2_1; //ADD_2_1. If there is only one child, this should work as a fw 1:1
                        }
-
                     }
                     else { //If both childs are disabled
                         parent_bits[as]=false; //Configuring the vector_bits for the next level
@@ -612,35 +614,33 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                         bool is_fw_enabled = false; //Indicates if the fw link has to be enabled
                         int left_span = 0;
                         int last_child = shift_this_as + 1; 
-			int last_child_enabled = shift_this_as; //Last child with a child enabled
-			if(vector_bits[last_child]) {
+			            int last_child_enabled = shift_this_as; //Last child with a child enabled
+			            if(vector_bits[last_child]) {
                             last_child_enabled = last_child;
-			}
+			            }
                         for(int s=last_child_enabled; s>=0; s--) {
                             if(vector_bits[s]) {
                                 left_span+=1;
                             }
-
-			    else { //VN must be consecutive nodes
+			                else { //VN must be consecutive nodes
                                 break; //Out of the loop
-		            }
+		                    }
 
                         }
                         //std::cout << "  Left span: " << left_span << std::endl;
                         //Right span. From the first child of as+1 (i.e., last_child+1) until the end
                         int right_span = 0;
-			int first_child_enabled = last_child + 1; // The first node enabled of the next adder. Could be the second. 
-			if(!vector_bits[first_child_enabled]) {
+			            int first_child_enabled = last_child + 1; // The first node enabled of the next adder. Could be the second.
+			            if(!vector_bits[first_child_enabled]) {
                             first_child_enabled+=1; //The second child of the next node
-			}
+			            }
                         for(int s=first_child_enabled; s < num_ms; s++) {  // s= last_child+1
                             if(vector_bits[s]) {
                                 right_span+=1;
                             }
-
-			    else { // VN Must be consecutive nodes. If not, the node has no childs and therefore the AD must not be enabled
+                            else { // VN Must be consecutive nodes. If not, the node has no childs and therefore the AD must not be enabled
                                 break; //out of the loop
-		            }
+		                    }
                         }
                         //std::cout << "  Right span: " << right_span << std::endl;                        
 
@@ -648,26 +648,26 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                             is_fw_enabled = false;
 
                             //Updating vector for the next level
-			    parent_bits[as]=false; //If both are 0
-			    parent_bits[as+1]=false; //If both are 0
+			                parent_bits[as]=false; //If both are 0
+			                parent_bits[as+1]=false; //If both are 0
                             if(left_span > 0) { //update higher level. It may go to the left or to the parent
                                  
                                 parent_bits[as]=true;
                                 //Cleaning right bits
                                 //for(int s=as+1; s<num_ms; s++) {
                                 //    vector_bits[s]=false;
-                               // }
+                                // }
                                 //std::cout << "  Left span is greater than 0 and right span is 0 so aswitch bit " << as << " is set as true and aswitch bit " << as+1 << " as false" << std::endl;
-                           //     vector_bits[as+1]=false;
+                                //     vector_bits[as+1]=false;
                             }
 
                             if(right_span > 0) {
                                 parent_bits[as+1]=true;
                                 //for(int s=0; s<=as; s++) {
                                 //    vector_bits[s]=false;
-                               // }
+                                // }
                                 //std::cout << "  Right span is greater than 0 and left span is 0 so aswitch bit " << as+1 << " is set as true and aswitch bit " << as << " as false" << std::endl;
-                             //   vector_bits[as]=false;
+                                //   vector_bits[as]=false;
                             }
                         }
                         
@@ -686,12 +686,12 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                             if(dir == LEFT) { //Smaller is to the right
                                 if(vector_bits[last_child+3] || vector_bits[last_child+4]) { //we are sure these nodes exist. 
                                     //These are the childs of the next node from the right
-				    is_fw_enabled=false; //The parent of the node must be enabled
+                                    is_fw_enabled=false; //The parent of the node must be enabled
                                     //std::cout << "  Direction is left but, the fw link is NOT enabled as parent is used" << std::endl;
                                     parent_bits[as]=true; //TODO new change
                                     parent_bits[as+1]=true;  //TODO new change
-				}
-				else {
+				                }
+				                else {
                                     is_fw_enabled=true;
                                     //std::cout << "  Direction is left and the fw link IS ENABLED" << std::endl;
                                     //Cleaning the bits from the nodes right after the right. This is done to update the next level
@@ -704,32 +704,32 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                             }
                             else { //Smaller is to the left since the direction is RIGHT
                                 if(vector_bits[last_child-2] || vector_bits[last_child-3]) { //The child of the previous as from the left
-				    is_fw_enabled = false; // The parent must be used
+				                    is_fw_enabled = false; // The parent must be used
                                     //std::cout << "  Direction is right but the fw link is NOT enabled as the parent is used" << std::endl;
                                     parent_bits[as]=true; //TODO new change
                                     parent_bits[as+1]=true; //TODO new change
-				}
-				else {
+				                }
+				                else {
                                     is_fw_enabled=true;
                                     //std::cout << "  Direction is right and the fw link IS ENABLED" << std::endl;
                                     //Cleaning the bits from the left nodes. This is done to update the next level
                                     for(int s=0; s<=shift_this_as+1; s++) {  //TODO From 0 to the last child of the first node 
                                         vector_bits[s]=false;
                                     }
-				    parent_bits[as+1]=true;
+                                    parent_bits[as+1]=true;
                                     parent_bits[as]=false; //TAKE CARE
                                 }
                             }
                         } //TODO update higher level
                         //Configuration of this AS and the next one using the direction obtained and the fact of wether the fw link has to be enabled
                         if(is_fw_enabled) {
-                            //Using as and as[+1] as receiver and sender depending on direction:
+                                //Using as and as[+1] as receiver and sender depending on direction:
                                 // as_receive: ADD_3_1
                                 // as_send = 
                                 //      if(Is not in map): ADD_2_1
                                 //      else: ADD_1_1_PLUS_FW_1_1
-                             //Calculating who send and who receive
-			//	std::cout << "FW IS ENABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED" << std::endl;
+                                //Calculating who send and who receive
+			                    //	std::cout << "FW IS ENABLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEED" << std::endl;
                              int as_receive; //as that receives the information 
                              int as_send;
                              if(dir == LEFT) {
@@ -771,37 +771,36 @@ void CompilerART::generate_art_signals_sparse(unsigned int num_ms) {
                                std::pair<int,int> current_as_pair (l, as);
                                std::pair<int,int> next_as_pair (l, as+1);
                                //std::cout << "  FW link is not enabled so the configuration is done by this other process" << std::endl;
-			       if(left_span > 0) { //If there is no left span this AD must be disabled
-                                   if(switches_configuration.count(current_as_pair) > 0) {
-                                       if(fwlinks_configuration.count(current_as_pair) > 0) { //LAST CHANGE PERFORMED
+			                    if(left_span > 0) { //If there is no left span this AD must be disabled
+                                    if(switches_configuration.count(current_as_pair) > 0) {
+                                        if(fwlinks_configuration.count(current_as_pair) > 0) { //LAST CHANGE PERFORMED
                                            switches_configuration[current_as_pair]=ADD_1_1_PLUS_FW_1_1; //If fw link is enabled...
                                            assert(fwlinks_configuration[next_as_pair]==SEND);
-                                       }
-                                       else {
+                                        }
+                                        else {
                                            switches_configuration[current_as_pair]=FW_2_2;
-                                       }
-                                   }
+                                        }
+                                    }
 
-                                   else {
-                                       switches_configuration[current_as_pair]=ADD_2_1;
-                                   }
-                               }
-			       if(right_span > 0) { //If there is no right span this AD must be disabled 
+                                    else {
+                                        switches_configuration[current_as_pair]=ADD_2_1;
+                                    }
+                                }
+			                    if(right_span > 0) { //If there is no right span this AD must be disabled
                                    //Configuring AS_next
-                                   if(switches_configuration.count(next_as_pair) > 0) {
-                                       if(fwlinks_configuration.count(next_as_pair) > 0) { //LAST CHANGE PERFORMED
-                                           assert(fwlinks_configuration[next_as_pair]==SEND);
-                                           switches_configuration[next_as_pair]=ADD_1_1_PLUS_FW_1_1; //If fw link is enabled...
-                                       }
-                                       else {
-                                           switches_configuration[next_as_pair]=FW_2_2;
-                                       }
-                                   }
-                                   else {
-                                       switches_configuration[next_as_pair]=ADD_2_1;
-                                   }
-			       }
-
+                                    if(switches_configuration.count(next_as_pair) > 0) {
+                                        if(fwlinks_configuration.count(next_as_pair) > 0) { //LAST CHANGE PERFORMED
+                                            assert(fwlinks_configuration[next_as_pair]==SEND);
+                                            switches_configuration[next_as_pair]=ADD_1_1_PLUS_FW_1_1; //If fw link is enabled...
+                                        }
+                                        else {
+                                            switches_configuration[next_as_pair]=FW_2_2;
+                                        }
+                                    }
+                                    else {
+                                        switches_configuration[next_as_pair]=ADD_2_1;
+                                    }
+			                    }
                         }
 
                     } //End if (as % 2)

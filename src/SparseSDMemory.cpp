@@ -216,7 +216,7 @@ void SparseSDMemory::setLayer(DNNLayer* dnn_layer, address_t MK_address, address
 	this->STR_DIST_VECTOR=K;
 
 	 this->OUT_DIST_VN=1;
-        this->OUT_DIST_VN_ITERATION=dim_sta;
+     this->OUT_DIST_VN_ITERATION=dim_sta;
 
 
 
@@ -231,7 +231,6 @@ void SparseSDMemory::setLayer(DNNLayer* dnn_layer, address_t MK_address, address
     this->output_size = dim_sta*dim_str;
     this->multiplier_dest_table = new unsigned int[dim_sta*K];
     this->str_counters_table = new unsigned int[dim_str*K];
-
 
 }
 
@@ -264,6 +263,8 @@ void SparseSDMemory::setSparseMetadata(metadata_address_t MK_metadata, metadata_
 
 void SparseSDMemory::cycle() {
     //Sending input data over read_connection
+    std::cout<<"[SPARASESDMEMORY CYCLE CHECKING] start"<<std::endl;
+    std :: cout <<"[START mapping_table column index] = " << start_column_index << std::endl;
     assert(this->layer_loaded);  // Layer has been loaded
 
 
@@ -273,11 +274,11 @@ void SparseSDMemory::cycle() {
 
     this->local_cycle+=1;
     this->sdmemoryStats.total_cycles++; //To track information
-    std :: cout <<"[START mapping_table column index] = " << start_column_index << std::endl;
+
 
 
     if(current_state==CONFIGURING) {   //If the architecture has not been configured
-        std::cout << "[CURRENT_STATE = CONFIGURING] start count VN size & set Network" << std::endl;
+        std::cout<<"[SPARASESDMEMORY CYCLE CHECKING] CONFIGURING"<<std::endl;
         int i = start_column_index;  //start mapping_table column index
 
         int n_ms = 0; //yujin: Number of multipliers assigned
@@ -350,22 +351,23 @@ void SparseSDMemory::cycle() {
             if (this->mapping_table[current_row_index * M * K +i]) { //If the bit is enabled in the stationary bitmap
                 //Add to the cluster
                 this->multiplier_dest_table[current_row_index * M * K + i] = n_ms; //DEST
+                std::cout<< "column index = "<< i << "row_index = "<<current_row_index<<std::endl;
                 std::cout << "[CHECK MAPPING TABLE INDEX & MULTIPLIER DESTINATION] " << " mapping_table index = " << current_row_index * M * K + i << " multiplier destination" << n_ms << std::endl;
                 n_ms++;
                 n_current_cluster++;
-
             }
 
             prev_weight = STR_address[i];
-            std::cout << "current row index = " << current_row_index << std::endl;
+            //std::cout << "current row index = " << current_row_index << std::endl;
             current_row_index++; // Next elem in vector (end next row index)
-            std::cout << "next row index = " << current_row_index << std::endl;
+            //std::cout << "next row index = " << current_row_index << std::endl;
 
             if (current_row_index == R) { //yujin: row index = R인 경우에 SparseVN을 만들어주고 있음
                 //Change cluster since we change of vector
                 current_row_index = 0; //row index = 0
+                //std::cout << "[CHECK ROW INDEX & COLUMN INDEX] " << " mapping_table column index =" << i << " row index"<< current_row_index << std::endl;
                 i++; // Next column
-                std::cout << "[CHECK ROW INDEX & COLUMN INDEX] " << " mapping_table column index =" << i << " row index"<< current_row_index << std::endl;
+
                 cur_weight = STR_address[i];
 
                 if (n_current_cluster > 0) {
@@ -385,7 +387,7 @@ void SparseSDMemory::cycle() {
         prev_sta_last_j_metadata_weight = this->last_row_next_start_index;
 
 
-        std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
+        //std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
         if (current_row_index < R) {
             //Find if there is a last cluster
             if (n_current_cluster > 0) {
@@ -404,7 +406,7 @@ void SparseSDMemory::cycle() {
             }
             if (remaining_values > 0) {
                 this->last_row_next_start_index = current_row_index; // yujin: if is value, start from next value
-            } else {
+            } else {                     
                 this->last_row_next_start_index = R;
             }
         }
@@ -431,7 +433,7 @@ void SparseSDMemory::cycle() {
                 }
             }
             */
-
+/*
         else { //If there is at least one cluster, then all of them has size K and it is necessary to stream K
             //K elements
             int remaining_values = 0;
@@ -447,10 +449,11 @@ void SparseSDMemory::cycle() {
                 this->last_row_next_start_index = R;
             }
         }
+        */
         count_column_index = i; // save end mapping_table column index
 
-        std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << last_row_next_start_index-1 <<std::endl;
-        std::cout << "[CHECK END VN COLUMN_INDEX] VN end column index" << count_column_index <<std::endl;
+        //std::cout << "[CHECK END NEXT START ROW INDEX] end row index" << last_row_next_start_index-1 <<std::endl;
+        //std::cout << "[CHECK END VN COLUMN_INDEX] VN end column index" << count_column_index <<std::endl;
 
         // } //end else whole rows
 
@@ -460,11 +463,12 @@ void SparseSDMemory::cycle() {
         //Once the VNs has been selected, lets configure the RN and MN
         // Configuring the multiplier network
         if (this->configurationVNs.size() == 0) { //yujin: configurationVNs에 아무것도 들어 있지 않은 경우
-            std::cout << "Cluster size exceeds the number of multipliers in column " << this->start_column_index << std::endl;
-            assert(false);
+           std::cout << "Cluster size exceeds the number of multipliers in column " << this->start_column_index << std::endl;
+           //assert(false);
         }
+
         for (int i = 0; i < this->configurationVNs.size(); i++) {
-            std::cout << "[CHECK VN SIZE USING MAPPING TABLE] VN size = " << this->configurationVNs[i].get_VN_Size() << std::endl;
+            std::cout << "[CHECK VN SIZE USING MAPPING TABLE] VN size = " << this->configurationVNs[i].get_VN_Size()<< std::endl;
         }
         this->sdmemoryStats.n_sta_vectors_at_once_avg += this->configurationVNs.size(); //accumul
         if (this->configurationVNs.size() > this->sdmemoryStats.n_sta_vectors_at_once_max) {
@@ -481,7 +485,7 @@ void SparseSDMemory::cycle() {
         this->reduce_network->configureSparseSignals(this->configurationVNs, this->dnn_layer, this->num_ms);
         std::cout << "End Networks configuring" << std::endl;
         //yujin: Number of psums to calculate in this iteration
-        this->output_size_iteration = this->configurationVNs.size();
+        //this->output_size_iteration = this->configurationVNs.size();
     }
 
 
@@ -489,7 +493,7 @@ void SparseSDMemory::cycle() {
     else if(current_state == DIST_STA_MATRIX) {
         //int address_offset = start_column_index;
         //Distribution of the stationary matrix
-        std::cout<< "[DIST_STA_MATRIX] Make weight destination & data"<<std::endl;
+        std::cout<<"[SPARASESDMEMORY CYCLE CHECKING] DIST_STA_MATRIX"<<std::endl;
         //std::cout<<"[start_column_index]"<<start_column_index<<std::endl;
         unsigned int dest = 0; //MS destination
         int row_size = this->R;
@@ -522,7 +526,7 @@ void SparseSDMemory::cycle() {
 
                     sdmemoryStats.n_SRAM_weight_reads++;
                     this->n_ones_sta_matrix++;
-
+                    //std::cout<<"!!!!!!!!!!!! dest = "<< dest<<std::endl;
                     DataPackage *pck_to_send = new DataPackage(sizeof(data_t), data, WEIGHT, 0, UNICAST, dest);
                     //std::cout<<"dest, data = " << dest <<data<<std::endl;
                     this->sendPackageToInputFifos(pck_to_send);
@@ -569,13 +573,13 @@ void SparseSDMemory::cycle() {
 */
 
     else if(current_state == DIST_STR_MATRIX) {
-        std::cout<< "[DIST_STA_MATRIX] Make input destination & data"<<std::endl;
+        std::cout<<"[SPARASESDMEMORY CYCLE CHECKING] DIST_STR_MATRIX"<<std::endl;
 
-        std::cout << "last_count_column_index : " << last_count_column_index <<std::endl;
-        std::cout << "column index : " << count_column_index << std::endl;
+        //std::cout << "last_count_column_index : " << last_count_column_index <<std::endl;
+        //std::cout << "column index : " << count_column_index << std::endl;
         //yujin: make input index (use data)
 
-        std::cout << "current_row_index : " << current_row_index << std::endl;
+        //std::cout << "current_row_index : " << current_row_index << std::endl;
 
         /*
         if(this->current_row_index > 0)  {
@@ -618,14 +622,15 @@ void SparseSDMemory::cycle() {
             // start = prev_last , end = current last
             int last_j = prev_sta_last_j_metadata;
             for (int j = prev_sta_last_j_metadata; j < row_size; j++) {
-                if (mapping_table[j * M * K + i]) {
+                if (mapping_table[j* M * K + i]) {
                     str_counters_table[j * M * K + i] = j;
+                    //std::cout<< "data row index -> j ="<< j <<std::endl;
                     std::cout << "test counter table" << " nonzero mapping table index check :" << j * M * K + i << " / data :" << j << std::endl;
 
                     unsigned int dest = multiplier_dest_table[j * M * K + i];
                     unsigned int src = str_counters_table[j * M * K + i];
                     data = STA_address[src];
-                    std::cout << "data" << STA_address[src] << std::endl;
+                    //std::cout << "data" << STA_address[src] << std::endl;
                     sdmemoryStats.n_SRAM_input_reads++;
 
                     DataPackage *pck = new DataPackage(sizeof(data_t), data, IACTIVATION, 0, UNICAST, dest); //+yujin: save row index -> use output address index
@@ -730,11 +735,11 @@ void SparseSDMemory::cycle() {
             this->output_address[addr_offset]=data; //ofmap or psum, it does not matter.
             current_output++;
 	        current_output_iteration++;
-            std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION : OUTPUT_SIZE_ITERATION = " << current_output_iteration << " : " << output_size_iteration << std::endl;
-	    if(current_output_iteration==output_size_iteration) {
-            current_output_iteration = 0;
-            sta_iter_completed=true;
-	    }
+            std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION = " << current_output_iteration << std::endl;
+	        if(write_fifo->isEmpty()) {
+                current_output_iteration = 0;
+                sta_iter_completed=true;
+	        }
             //std::cout << "write fifo i = " << i << std::endl;
             //std::cout << "write fifo size = " << write_fifo->size() << std::endl;
             delete pck_received; //Deleting the current package
@@ -743,7 +748,20 @@ void SparseSDMemory::cycle() {
 
     //Transitions
     if(current_state==CONFIGURING) {
-        current_state=DIST_STA_MATRIX;
+        if(this->configurationVNs.size()== 0) {
+            //std::cout << "config vn size = " <<this->configurationVNs.size() << std::endl;
+            start_column_index = count_column_index;
+            if(start_column_index < M*K) {
+                current_state = CONFIGURING;
+            }
+            else{
+                this->execution_finished = true;
+                current_state = ALL_DATA_SENT;
+            }
+        }
+        else
+            current_state=DIST_STA_MATRIX;
+
     }
 
     else if(current_state==DIST_STA_MATRIX) {
@@ -770,7 +788,7 @@ void SparseSDMemory::cycle() {
         // count_column_index : current column
 	    if(this->current_row_index == this->R) { //If this is the end of the cluster, it might start to the next
             std::cout<< "row_index == R : go to next column"<<std::endl;
-                //this->start_column_index+=1;
+            //this->start_column_index+=1;
             this->start_column_index = count_column_index + 1;
 		    this->current_row_index = 0;
         }
@@ -806,7 +824,6 @@ void SparseSDMemory::cycle() {
 	    else {
             current_state=CONFIGURING;
 	    }
-
     }
 
     this->send();
@@ -829,12 +846,12 @@ void SparseSDMemory::sendPackageToInputFifos(DataPackage* pck) {
                 psum_fifos[i]->push(pck_new);
             }          
             else {  //INPUT OR WEIGHT
-                std::cout<< "send package to input fifos"<<std::endl;
+                std::cout << "send package to input fifos" << std::endl;
                 //Seting iteration of the package
-                pck_new->setIterationK(pck->getIterationK()); //Used to avoid sending packages from a certain iteration without performing the previous.
+                pck_new->setIterationK(
+                        pck->getIterationK()); //Used to avoid sending packages from a certain iteration without performing the previous.
                 input_fifos[i]->push(pck_new);
-            }     
-           
+            }
         }
     }
 
@@ -843,8 +860,10 @@ void SparseSDMemory::sendPackageToInputFifos(DataPackage* pck) {
         //We only have to send the weight to one port and change the destination to adapt it to the subgroup
         unsigned int dest = pck->get_unicast_dest(); //This is according to ALL the mswitches.
         std::cout<<"[sendPackageToInputFifos] : (UNICAST)"<<std::endl;
+        //std::cout<<"@@@@@@@@ dest = "<<dest<<std::endl;
         unsigned int input_port = dest / this->ms_size_per_input_port;
         unsigned int local_dest = dest % this->ms_size_per_input_port;
+
 
         //Creating the package
         std::cout<<"[send package] "<<"pck size : "<<pck->get_size_package()<<" pck data :"<<pck->get_data()<<" pck data type :"<< pck->get_data_type() << " input port :"<<input_port<<" local dest : "<<local_dest<<std::endl;
@@ -853,9 +872,8 @@ void SparseSDMemory::sendPackageToInputFifos(DataPackage* pck) {
         //Sending to the fifo corresponding with port input_port
         if(pck->get_data_type() == PSUM) { //Actually a PSUM cannot be broadcast. But we put this for compatibility
             psum_fifos[input_port]->push(pck_new);
-        }          
+        }
         else {  //INPUT OR WEIGHT
-
             input_fifos[input_port]->push(pck_new);
             pck_new->setIterationK(pck->getIterationK());
         }
@@ -903,7 +921,7 @@ void SparseSDMemory::sendPackageToInputFifos(DataPackage* pck) {
 } 
 
 void SparseSDMemory::send() {
-    std::cout<<"[SPARSE_SDMEMORY SEND]"<<std::endl;
+    //std::cout<<"[SPARSE_SDMEMORY SEND]"<<std::endl;
     //Iterating over each port and if there is data in its fifo we send it. We give priority to the psums
     for(int i=0; i<this->n_read_ports; i++) {
         //std::cout<<"[SEND] CEHCKING PSUM & INPUT FIFO" << i << "is empty ?" << this-> input_fifos[i]->isEmpty() <<std::endl;
@@ -923,7 +941,7 @@ void SparseSDMemory::send() {
         //If psums fifo is empty then input fifo is checked. If psum is not empty then else do not compute. Important this ELSE to give priority to the psums and do not send more than 1 pck
         else if(!this->input_fifos[i]->isEmpty()) {
             std::vector<DataPackage*> pck_to_send;
-            std::cout<<"[INPUT FIFO NOT EMPTY]"<<std::endl;
+            //std::cout<<"[INPUT FIFO NOT EMPTY]"<<std::endl;
             //If the package belongs to a certain k iteration but the previous k-1 iteration has not finished the package is not sent
             DataPackage* pck = input_fifos[i]->front(); //Front because we are not sure if we hazve to send it.
 
@@ -954,10 +972,7 @@ void SparseSDMemory::send() {
             input_fifos[i]->pop(); //pulling from fifo
 
         }
-            
     }
-
-
 }
 
 //TODO Remove this connection

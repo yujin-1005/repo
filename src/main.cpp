@@ -311,26 +311,53 @@ bool runSparseGEMMCommand(int argc, char *argv[]) {
     //float* input_matrix = input;
 
     //float* input_matrix {new float [K*N] {1, 2, 4, 5, 8, 3, 9, 6, 5, 6, 8, 9}};
-    float* input_matrix {new float [K*N] {1,2,4,5,8, 3, 9, 6, 5, 6, 8, 9}};
+    ifstream ifm_mat, weight_mat, map_table;
+    ifm_mat.open("./input_files/test_ifm.txt");
+    float* input_matrix {new float [K*N] {1,  2,  3,  6,  7,   8,   11,   12,
+                                          2,  3,  4, 7, 8,  9,  12, 13,
+                                          3, 4, 5, 8, 9,   10, 13, 14,
+                                          6, 7, 8, 11, 12, 13, 16, 17}};
+    for(int i =0; i < K*N ; i++){
+        int c;
+        ifm_mat >> c;
+        input_matrix[i] = c;
+    }
     //float* input_matrix {new float [K*N] {5, 6, 8, 9}};
-    std::cout << "check IFM matrix" << std::endl;
-    for (int i = 0; i<M*K; i++) 
-        std::cout << input_matrix[i] << std::endl;
+    //std::cout << "check IFM matrix" << std::endl;
+    //for (int i = 0; i<M*K; i++)
+    //    std::cout << input_matrix[i] << std::endl;
 
 
-    float* filter_matrix {new float [K*M] {1, 1, 1, 1,1,1,1,1,2,2,2,2}};
+    float* filter_matrix {new float [M*K] {1, 1, 1, 2, 2, 2, 3, 3,
+                                           1, 1, 1, 2, 2, 2,3, 3,
+                                           1, 1, 1, 2, 2, 2, 3, 3,
+                                           1, 1, 1, 2, 2, 2, 3, 3}};
+    weight_mat.open("./input_files/test_weight.txt");
+    for(int i =0; i < K*M ; i++){
+        int c;
+        weight_mat >> c;
+        filter_matrix[i] = c;
+    }
+
     //float* filter_matrix {new float [K*N] {2,2,2,2}};
-    std::cout << "check filter matrix" << std::endl;
-    for (int i = 0; i<K*N; i++)
-        std::cout << filter_matrix[i]<<std::endl;
+    //std::cout << "check filter matrix" << std::endl;
+    //for (int i = 0; i<K*M; i++)
+    //    std::cout << filter_matrix[i]<<std::endl;
 
 
     //yujin: Generating mapping_table!!
-
-    unsigned int* mapping_table {new unsigned int[M*K*4] {0,0,0,1, 0, 1, 0, 0, 0,0,0,1
-                                                          ,0,0,1,1, 0,0,1,0, 0,0, 1, 0
-                                                          ,0,1,0,0, 1, 0,0,0, 0,1,0,0
-                                                          ,1, 1,0,1, 1,0,1, 0,1, 0,0 ,0}};
+    //
+    unsigned int* mapping_table {new unsigned int[M*K*N] {   0, 0, 0, 1, 0, 1, 0, 0, 0, 0,0, 1
+                                                           ,0,0,1,1,0,0,1,0,0,0,1, 0
+                                                           ,0,1,0,0,1,0,0,0,0,1,0, 0
+                                                           ,1,1,0,1,1,0,1,0,1,0,0, 0
+    }};
+    map_table.open("./input_files/test_mt.txt");
+    for(int i =0; i < M*K*N ; i++){
+        int c;
+        map_table >> c;
+        mapping_table[i] = c;
+    }
 
     /*
      unsigned int* mapping_table {new unsigned int[M*K*4] {0,0,0,1
@@ -347,10 +374,6 @@ bool runSparseGEMMCommand(int argc, char *argv[]) {
                                                              ,1,0,0,0, 1, 0,0,0, 0,1,0,0
                                                              ,1, 0,1,0, 1,0,1, 0,1, 0,0 ,0}};
                                                              */
-
-    std::cout << "check mapping_table" << std::endl;
-    for (int i = 0; i<M*K*4; i++)
-        std::cout << mapping_table[i]<<std::endl;
 
 
     //Creating MK matrix
