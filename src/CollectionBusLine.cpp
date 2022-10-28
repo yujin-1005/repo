@@ -50,6 +50,7 @@ void CollectionBusLine::receive() {
         if(input_connections[i]->existPendingData()) {
             std::vector<DataPackage*> pck = input_connections[i]->receive();
             for(int j=0; j<pck.size(); j++) { //Actually this is 1
+                //std::cout<<"pck size : "<<pck.size()<<std::endl;
                 this->collectionbuslineStats.n_inputs_receive[i]+=1; //To track information. Number of packages received by each input line for this output port
                 input_fifos[i]->push(pck[j]); //Inserting the package into the fifo
             }
@@ -65,8 +66,10 @@ void CollectionBusLine::cycle() {
     unsigned int n_iters = 0;
     //To track Information
     unsigned int n_inputs_trying=0;
+    //std::cout<<"input fifo size = " << input_fifos.size()<<std::endl;
     for(int i=0; i<input_fifos.size(); i++) {
         if(!input_fifos[i]->isEmpty()) {
+            //std::cout<< "input fifo is not empty count = "<< n_inputs_trying<<std::endl;
             n_inputs_trying+=1;
         }
     }
@@ -77,12 +80,15 @@ void CollectionBusLine::cycle() {
     }
 
     //End to track information and the actual code to perform the cycle is executed
-  
+
     std::vector<DataPackage*> data_to_send;
     while(!selected && (n_iters < input_fifos.size())) { //if input not found or there is still data to look up
+        //std::cout<< "next input selected = " << next_input_selected << std::endl;
+        //std::cout<< "input_fifos[next_input_selected]->isEmpty()"<<input_fifos[next_input_selected]->isEmpty()<<std::endl;
         if(!input_fifos[next_input_selected]->isEmpty()) { //If there is data in this input then
             selected=true;
             DataPackage* pck = input_fifos[next_input_selected]->pop(); //Poping from the fifo
+            //std::cout<<"bus id = "<<busID<<std::endl;
             pck->setOutputPort(this->busID); //Setting tracking information to the package
             data_to_send.push_back(pck); //Sending the package to memory
             this->collectionbuslineStats.n_sends++; //To track information
@@ -92,11 +98,12 @@ void CollectionBusLine::cycle() {
     }
 
     //Sending the data to the output connection
+
     if(selected) {
         this->output_port->send(data_to_send);
 
     }
- 
+
 }
 
 void CollectionBusLine::printStats(std::ofstream& out, unsigned int indent) {

@@ -33,7 +33,7 @@ void Connection::send(vector<DataPackage*> data_p) {
 #endif
     this->data = data_p; //list of pointers assignment. All the vectors are replicated to save a copy and track it.
     this->pending_data = true;
-    std::cout<<"[CONNECTION SEND] send data"<<std::endl;
+    //std::cout<<"[CONNECTION SEND] send data"<<std::endl;
 
     //Tracking parameters
     this->connectionStats.n_sends+=1;
@@ -43,7 +43,7 @@ void Connection::send(vector<DataPackage*> data_p) {
 //Return the packages from the interconnection
 vector<DataPackage*> Connection::receive() {
     if(this->pending_data) {
-        std::cout<<"[CONNECTION RECEIVE] receive data"<< std::endl;
+        //std::cout<<"[CONNECTION RECEIVE] receive data"<< std::endl;
         this->pending_data = false;
 	    return this->data;
     }

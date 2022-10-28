@@ -339,14 +339,6 @@ void SparseSDMemory::cycle() {
         while ((n_ms < this->num_ms) && (current_row_index * M * K + i < M * K * N) &&(i < M * K)) { //TODO change MK if it is another dw
             //yujin: i<M*K 조건 추가
             //TODO YUJUIN : break if diff weight
-            //if (STR_address[i] != STR_address[i+1])
-                //break;
-
-            //std::cout<<"[PREV_WEIGHT] prev_weight = "<< prev_weight <<std::endl; //<< " cur_weight"<<cur_weight<< std::endl;
-            //if(prev_weight != cur_weight) {
-
-            // break;
-            //}
 
             if (this->mapping_table[current_row_index * M * K +i]) { //If the bit is enabled in the stationary bitmap
                 //Add to the cluster
@@ -361,6 +353,13 @@ void SparseSDMemory::cycle() {
             //std::cout << "current row index = " << current_row_index << std::endl;
             current_row_index++; // Next elem in vector (end next row index)
             //std::cout << "next row index = " << current_row_index << std::endl;
+            if (n_current_cluster > 0) {
+                //Creating the cluster for this row
+                SparseVN VN(n_current_cluster, false);
+                this->configurationVNs.push_back(VN); //Adding to the list
+                this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
+                n_current_cluster = 0;
+            }
 
             if (current_row_index == R) { //yujin: row index = R인 경우에 SparseVN을 만들어주고 있음
                 //Change cluster since we change of vector
@@ -369,7 +368,7 @@ void SparseSDMemory::cycle() {
                 i++; // Next column
 
                 cur_weight = STR_address[i];
-
+                /*
                 if (n_current_cluster > 0) {
                     //Creating the cluster for this row
                     SparseVN VN(n_current_cluster, false);
@@ -377,6 +376,7 @@ void SparseSDMemory::cycle() {
                     this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
                     n_current_cluster = 0;
                 }
+                */
                 if(prev_weight != cur_weight)
                     break;
             }
@@ -390,6 +390,7 @@ void SparseSDMemory::cycle() {
         //std::cout << "[CHECK START VN COLUMN_INDEX] VN start row index" << prev_sta_last_j_metadata <<std::endl;
         if (current_row_index < R) {
             //Find if there is a last cluster
+            /*
             if (n_current_cluster > 0) {
                 //Creating the cluster for this row
                 SparseVN VN(n_current_cluster, false);
@@ -397,7 +398,7 @@ void SparseSDMemory::cycle() {
                 this->vnat_table.push_back(0); //Adding the current calculation (row or column) of this VN.
                 n_current_cluster = 0;
             }
-
+            */
             int remaining_values = 0;
             for (int r = current_row_index; r < R; r++) {
                 if (this->mapping_table[r * M * K + i]) {
@@ -717,11 +718,17 @@ void SparseSDMemory::cycle() {
 
 
     //Receiving output data from write_connection
-    this->receive();
+    //this->receive();
+    else if (current_state == WAITING_FOR_NEXT_STA_ITER){
+        sta_iter_completed = true;
+    }
 
 
+
+
+/*
     if(!write_fifo->isEmpty()) {
-        std::cout<<"[WRITE_FIFO] pop write_fifo -> write output_address (psum or ofmap)"<<std::endl;
+        std::cout<<"[WRITE IFO] pop write_fifo -> write output_address (psum or ofmap)"<<std::endl;
         //Index the data by using the VN Address Table and the VN id of the packages
         for(int i=0; i<write_fifo->size(); i++) {
             DataPackage* pck_received = write_fifo->pop();
@@ -738,14 +745,14 @@ void SparseSDMemory::cycle() {
             std::cout << "[COUNT COMPLETE FLAG] CURRENT_OUTPUT_ITERATION = " << current_output_iteration << std::endl;
 	        if(write_fifo->isEmpty()) {
                 current_output_iteration = 0;
-                sta_iter_completed=true;
+                //sta_iter_completed=true;
 	        }
             //std::cout << "write fifo i = " << i << std::endl;
             //std::cout << "write fifo size = " << write_fifo->size() << std::endl;
             delete pck_received; //Deleting the current package
         }
     }
-
+*/
     //Transitions
     if(current_state==CONFIGURING) {
         if(this->configurationVNs.size()== 0) {
@@ -772,8 +779,11 @@ void SparseSDMemory::cycle() {
     //std::cout<<"[PSUM COUNT] psum complete (" << str_current_index << "/" << this->configurationVNs.size() << ")" << std::endl;
 	current_state = WAITING_FOR_NEXT_STA_ITER;
     }
+    else if (current_state == WAITING_FOR_NEXT_STA_ITER){
+        current_state = FINAL_STATE;
+    }
 
-    else if(current_state==WAITING_FOR_NEXT_STA_ITER && sta_iter_completed) {
+    else if(current_state==FINAL_STATE) {
     
 	    //this->str_current_index = 0;
 	    this->sta_iter_completed=false;
@@ -885,7 +895,7 @@ void SparseSDMemory::sendPackageToInputFifos(DataPackage* pck) {
         bool thereis_receiver;
         printf("paket \n");
         for(int i=0; i<this->n_read_ports; i++) { //Checking each port with size this->ms_size_per_input_port each. Total=ms_size
-            std::cout<<"n_read_ports"<<n_read_ports<<std::endl;
+            //std::cout<<"n_read_ports"<<n_read_ports<<std::endl;
             unsigned int port_index = i*this->ms_size_per_input_port;
             thereis_receiver = false; // To know at the end if the group
             bool* local_dest = new bool[this->ms_size_per_input_port]; //Local destination array for the subtree corresponding with the port i
@@ -924,9 +934,11 @@ void SparseSDMemory::send() {
     //std::cout<<"[SPARSE_SDMEMORY SEND]"<<std::endl;
     //Iterating over each port and if there is data in its fifo we send it. We give priority to the psums
     for(int i=0; i<this->n_read_ports; i++) {
+        //std::cout<<"n_read_ports"<<this->n_read_ports<<std::endl;
         //std::cout<<"[SEND] CEHCKING PSUM & INPUT FIFO" << i << "is empty ?" << this-> input_fifos[i]->isEmpty() <<std::endl;
 
         if(!this->psum_fifos[i]->isEmpty()) { //If there is something we may send data though the connection
+            std::cout<<"psum_fifos" << i << "is Empty?" <<this->psum_fifos[i]->isEmpty()<<std::endl;
             std::cout<<"[SEND PSUM -> WRITE_CONNECTION]"<<std::endl;
             std::vector<DataPackage*> pck_to_send;
             DataPackage* pck = psum_fifos[i]->pop();
@@ -979,22 +991,26 @@ void SparseSDMemory::send() {
 void SparseSDMemory::receive() { //TODO control if there is no space in queue
     if(this->write_connection->existPendingData()) {
         std::vector<DataPackage*> data_received = write_connection->receive();
+        //std::cout<<"[DATA RECEIVE] write_connection -> write_fifo push"<<std::endl;
         for(int i=0; i<data_received.size(); i++) {
-            std::cout<<"[DATA RECEIVE] write_connection -> write_fifo push"<<std::endl;
+            //std::cout<<"[DATA RECEIVE] write_connection -> write_fifo push"<<std::endl;
             write_fifo->push(data_received[i]);
         }
     }
+    //std::cout<<"write_port_connectionswrite_port_connections.size = "<<write_port_connections.size()<<std::endl;
     for(int i=0; i<write_port_connections.size(); i++) { //For every write port
         //std::cout<<"i, write port connections size "<<i<<","<<write_port_connections.size()<<std::endl;
         //yujin: seg fault!
         //printf("data=");
-        //std::cout<<write_port_connections[i]->existPendingData()<<std::endl;
+        std::cout<<write_port_connections[i]->existPendingData()<<std::endl;
         if(write_port_connections[i]->existPendingData()) {
+            std::cout<<"existPendingData = "<<write_port_connections[i]->existPendingData()<<std::endl;
             //std::cout<<"exists pending data1"<< std::endl;
             std::vector<DataPackage*> data_received = write_port_connections[i]->receive();
             //std::cout<< "vector receive1"<<std::endl;
              for(int i=0; i<data_received.size(); i++) {
                  //std::cout << "write fifo push1"<<std::endl;
+
                  write_fifo->push(data_received[i]);
              }
         }    

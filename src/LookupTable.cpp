@@ -16,10 +16,11 @@ LookupTable::LookupTable(id_t id, std::string name, Config stonne_cfg, Connectio
 void LookupTable::cycle() {
     if(this->inputConnection->existPendingData()) {
         //std::cout << "LookupTABLE is executing" << std::endl;
+        std::cout<<"[LOOK_UP_TABLE]"<<std::endl;
         std::vector<DataPackage*> pck_to_receive = this->inputConnection->receive(); 
         //TODO apply activation function
         this->outputConnection->send(pck_to_receive);
-        std::cout<<"[LOOK_UP_TABLE] ASconnection output -> SPARSE_MEM write connection"<<std::endl;
+
         //for(int i=0; i<pck_to_receive.size(); i++) {
         //    std::cout << "Data received: " << pck_to_receive[i]->get_data() << std::endl;
         //}

@@ -231,11 +231,12 @@ void ASwitch::send() {
             std::cout << "[ASWITCH_FUNC] Cycle " << local_cycle << ", ASwitch " << this->level << ":" << this->num_in_level << " has sent a psum to memory (FORWARDING DATA)" << std::endl;
 #endif
             this->aswitchStats.n_memory_send++; //Track the information
-            this->memoryConnection->send(vector_to_send_parent); 
+            this->memoryConnection->send(vector_to_send_parent);
+            //std::cout<< "ASWITCH send collection bus input connection" <<std::endl;
         }
         else { 
 #ifdef DEBUG_ASWITCH_FUNC
-            std::cout << "[ASWITCH_FUNC] Cycle " << local_cycle << ", ASwitch " << this->level << ":" << this->num_in_level << " has sent a psum to the parent" << std::endl;
+            std::cout << "[ASWITCH_FUNC] Cycle " << local_cycle << ", ASwitch " << this->level << ":" << this->num_in_level << " has sent a psum to the parent*****" << std::endl;
 #endif
 
             this->aswitchStats.n_parent_send++; //Track the information

@@ -153,6 +153,7 @@ void ASNetwork::setMemoryConnections(std::vector<std::vector<Connection*>>  memo
         Connection* mem_conn_second = memoryConnections[busID][inputID+1];
 	if(this->accumulation_buffer_enabled==0)  { //If the accumulation buffer is not enabled
             as_first->setMemoryConnection(mem_conn_first, busID, inputID);
+            //std::cout<< "switch bus id = "<<busID<<std::endl;
             as_second->setMemoryConnection(mem_conn_second, busID, inputID+1);
 	}
 

@@ -343,6 +343,7 @@ void MSwitch::cycle() { //Computing a cycle
     else { //It is a normal MS with folding implementation
         //std::cout<< "else" << std::endl;
         //If the fw link is enabled in this ms and it is not the first window of the row (in whose case all the inputs are fetched from mem)
+        //std::cout<<"mswitch  else"<<std::endl;
         Fifo* fifo_to_read; //aux fifo which points to either input_forwarding_fifo or activation_fifo (from mem)
         this->receive(inputConnection); //yujin: separate input & weight data -> activation fifo & weight fifo
         if(this->inputForwardingEnabled) {
